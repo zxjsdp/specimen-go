@@ -30,10 +30,10 @@ func GetDataMatrix(xlsxFileName string) entities.DataMatrix {
 		cellsPerRow := make([]string, 0)
 		for _, cell := range row {
 			cellsPerRow = append(cellsPerRow, cell)
-			fmt.Printf(cell, "\t")
+			//fmt.Printf(cell, "\t")
 		}
 		matrix = append(matrix, cellsPerRow)
-		fmt.Println()
+		//fmt.Println()
 	}
 
 	return entities.DataMatrix{Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}

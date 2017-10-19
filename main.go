@@ -16,5 +16,5 @@ func generateResultData() string {
 func main() {
 	//resultData := generateResultData()
 	//fmt.Println(resultData)
-	fmt.Println(filetype.GetDataMatrix("data.xlsx"))
+	fmt.Println(filetype.GetDataMatrix("data.xlsx").String())
 }
