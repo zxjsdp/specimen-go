@@ -16,7 +16,7 @@ type SpecimenMetaInfo struct {
 	Barcode           string // 条形码
 	PatternType       string // 模式类型
 	SpecimenCondition string // 标本状态
-	Copies            string // 库存
+	Inventory         string // 库存
 }
 
 // 采集信息
@@ -29,7 +29,7 @@ type CollectingInfo struct {
 	District         string // 区县
 	Altitude         string // 海拔
 	NegativeAltitude string // 负海拔
-	Place            string // 地名
+	DetailedPlace    string // 地名
 	Habitat          string // 生境
 	Longitude        string // 经度
 	Latitude         string // 纬度

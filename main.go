@@ -4,13 +4,10 @@ import (
 	"fmt"
 
 	"github.com/zxjsdp/specimen-go/converters"
-	"github.com/zxjsdp/specimen-go/entities"
 	"github.com/zxjsdp/specimen-go/filetype"
 )
 
 func generateResultData() string {
-	resultData := entities.ResultData{}
-	resultData.Altitude = ""
 	return "Result"
 }
 

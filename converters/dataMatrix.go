@@ -38,7 +38,7 @@ func ToEntryDatas(d entities.DataMatrix) []entities.EntryData {
 		longitude := cells[9]
 		altitude := cells[10]
 		collectingDate := cells[11]
-		copies := cells[12]
+		inventory := cells[12]
 		plantType := cells[13]
 		collector := cells[14]
 		identifier := cells[15]
@@ -46,7 +46,7 @@ func ToEntryDatas(d entities.DataMatrix) []entities.EntryData {
 		recorder := cells[17]
 		recordingDate := cells[18]
 
-		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{speciesNumber, copies}
+		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{speciesNumber, inventory}
 		entryCollectingInfo := entities.EntryCollectingInfo{
 			province,
 			city,

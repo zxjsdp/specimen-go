@@ -19,12 +19,12 @@ import (
 //	Longitude         string // 经度
 //	Altitude          string // 海拔
 //	CollectingDate    string // 采集日期
-//	Copies            int32  // 份数
-//	PlantType         string // 草灌
+//	Inventory         string // 库存
+//	Habit         string // 草灌
 //	Collector         string // 采集人
 //	Identifier        string // 鉴定人
 //	IdentifyDate      string // 鉴定日期
-//	Recorder          string // 录入人
+//	RecordingPerson          string // 录入人
 //	RecordingDate     string // 录入日期
 //}
 
@@ -48,7 +48,7 @@ func (e EntryData) String() string {
 // Entry 标本基础信息
 type EntrySpecimenMetaInfo struct {
 	SpeciesNumber string // 物种编号
-	Copies        string // 份数
+	Inventory     string // 库存
 }
 
 // Entry 采集信息
@@ -71,11 +71,11 @@ type EntryIdentificationInfo struct {
 	ChineseName       string // 中文名
 	FamilyChineseName string // 科名（中文）
 	FamilyLatinName   string // 科名（拉丁名）
-	PlantType         string // 习性（草灌）
+	Habit             string // 习性（草灌）
 }
 
 // Entry 录入信息
 type EntryRecordingInfo struct {
-	Recorder      string // 录入人
-	RecordingDate string // 录入日期
+	RecordingPerson string // 录入人
+	RecordingDate   string // 录入日期
 }
