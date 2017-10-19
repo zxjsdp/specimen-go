@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 	"github.com/zxjsdp/specimen-go/filetype"
 )
@@ -16,5 +17,11 @@ func generateResultData() string {
 func main() {
 	//resultData := generateResultData()
 	//fmt.Println(resultData)
-	fmt.Println(filetype.GetDataMatrix("data.xlsx").String())
+	entryDataMatrix := filetype.GetDataMatrix("data.xlsx")
+	entryDatas := converters.ToEntryDatas(entryDataMatrix)
+
+	for _, each := range entryDatas {
+		fmt.Println(each.String())
+	}
+	//fmt.Println(entryDatas)
 }

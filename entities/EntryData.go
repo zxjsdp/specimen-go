@@ -1,5 +1,10 @@
 package entities
 
+import (
+	"fmt"
+	"reflect"
+)
+
 //// 个体录入信息
 //type EntryData struct {
 //	SpeciesNumber     string // 物种编号
@@ -31,10 +36,19 @@ type EntryData struct {
 	EntryRecordingInfo      // Entry 录入信息
 }
 
+func (e EntryData) String() string {
+	output := ""
+	v := reflect.ValueOf(e)
+	for i := 0; i < v.NumField(); i++ {
+		output += fmt.Sprintf("%v\t", v.Field(i).Interface())
+	}
+	return output
+}
+
 // Entry 标本基础信息
 type EntrySpecimenMetaInfo struct {
 	SpeciesNumber string // 物种编号
-	Copies        int32  // 份数
+	Copies        string // 份数
 }
 
 // Entry 采集信息
