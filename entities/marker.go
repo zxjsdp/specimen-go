@@ -1,7 +1,7 @@
 package entities
 
 // 物种信息
-type SpeciesData struct {
+type MarkerData struct {
 	SpeciesNumber string // 物种编号
 	FullLatinName string // 物种名（拉丁名，二名法）
 	SerialNumber  string // 流水号

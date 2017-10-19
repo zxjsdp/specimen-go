@@ -15,13 +15,15 @@ func generateResultData() string {
 }
 
 func main() {
-	//resultData := generateResultData()
-	//fmt.Println(resultData)
-	entryDataMatrix := filetype.GetDataMatrix("data.xlsx")
+	entryDataMatrix := filetype.GetDataMatrix("data/data.xlsx")
 	entryDatas := converters.ToEntryDatas(entryDataMatrix)
-
 	for _, each := range entryDatas {
 		fmt.Println(each.String())
 	}
-	//fmt.Println(entryDatas)
+
+	markerDataMatrix := filetype.GetDataMatrix("data/query.xlsx")
+	markerDatas := converters.ToMarkerDatas(markerDataMatrix)
+	for _, each := range markerDatas {
+		fmt.Println(each)
+	}
 }

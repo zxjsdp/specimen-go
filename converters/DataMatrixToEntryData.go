@@ -2,6 +2,27 @@ package converters
 
 import "github.com/zxjsdp/specimen-go/entities"
 
+func ToMarkerDatas(d entities.DataMatrix) []entities.MarkerData {
+	markerDatas := make([]entities.MarkerData, 0)
+	for _, cells := range d.Matrix {
+		speciesNumber := cells[0]
+		fullLatinName := cells[1]
+		serialNumber := cells[2]
+		barcode := cells[3]
+		copyNumber := cells[4]
+
+		markerDatas = append(markerDatas, entities.MarkerData{
+			speciesNumber,
+			fullLatinName,
+			serialNumber,
+			barcode,
+			copyNumber,
+		})
+	}
+
+	return markerDatas
+}
+
 func ToEntryDatas(d entities.DataMatrix) []entities.EntryData {
 	entryDatas := make([]entities.EntryData, 0)
 	for _, cells := range d.Matrix {
