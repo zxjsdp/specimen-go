@@ -2,8 +2,8 @@ package converters
 
 import "github.com/zxjsdp/specimen-go/entities"
 
-func ToMarkerDatas(d entities.DataMatrix) []entities.MarkerData {
-	markerDatas := make([]entities.MarkerData, 0)
+func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
+	markerDataSlice := make([]entities.MarkerData, 0)
 	for _, cells := range d.Matrix {
 		speciesNumber := cells[0]
 		fullLatinName := cells[1]
@@ -11,7 +11,7 @@ func ToMarkerDatas(d entities.DataMatrix) []entities.MarkerData {
 		barcode := cells[3]
 		copyNumber := cells[4]
 
-		markerDatas = append(markerDatas, entities.MarkerData{
+		markerDataSlice = append(markerDataSlice, entities.MarkerData{
 			speciesNumber,
 			fullLatinName,
 			serialNumber,
@@ -20,11 +20,11 @@ func ToMarkerDatas(d entities.DataMatrix) []entities.MarkerData {
 		})
 	}
 
-	return markerDatas
+	return markerDataSlice
 }
 
-func ToEntryDatas(d entities.DataMatrix) []entities.EntryData {
-	entryDatas := make([]entities.EntryData, 0)
+func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
+	entryDataSlice := make([]entities.EntryData, 0)
 	for _, cells := range d.Matrix {
 		speciesNumber := cells[0]
 		fullLatinName := cells[1]
@@ -79,8 +79,8 @@ func ToEntryDatas(d entities.DataMatrix) []entities.EntryData {
 			entryRecordingInfo,
 		}
 
-		entryDatas = append(entryDatas, entryData)
+		entryDataSlice = append(entryDataSlice, entryData)
 	}
 
-	return entryDatas
+	return entryDataSlice
 }

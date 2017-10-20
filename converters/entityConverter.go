@@ -3,13 +3,13 @@ package converters
 import "github.com/zxjsdp/specimen-go/entities"
 
 // 生成 Entry info map
-func GenerateEntryDataMap(entryDatas []entities.EntryData) map[string]entities.EntryData {
+func GenerateEntryDataMap(entryDataSlice []entities.EntryData) map[string]entities.EntryData {
 	entryDataMap := make(map[string]entities.EntryData)
-	if len(entryDatas) == 0 {
+	if len(entryDataSlice) == 0 {
 		return entryDataMap
 	}
 
-	for _, entry := range entryDatas {
+	for _, entry := range entryDataSlice {
 		entryDataMap[entry.SpeciesNumber] = entry
 	}
 

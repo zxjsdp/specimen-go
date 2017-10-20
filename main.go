@@ -14,14 +14,14 @@ func generateResultData() string {
 
 func main() {
 	entryDataMatrix := filetype.GetDataMatrix("data/data.xlsx")
-	entryDatas := converters.ToEntryDatas(entryDataMatrix)
-	entryDataMap := converters.GenerateEntryDataMap(entryDatas)
+	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
+	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
 
 	markerDataMatrix := filetype.GetDataMatrix("data/query.xlsx")
-	markerDatas := converters.ToMarkerDatas(markerDataMatrix)
+	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
 
 	webDataMap := make(map[string]entities.WebInfo)
-	for _, marker := range markerDatas {
+	for _, marker := range markerDataSlice {
 		resultData := converters.ToResultData(marker, entryDataMap, webDataMap)
 		fmt.Println(resultData)
 	}
