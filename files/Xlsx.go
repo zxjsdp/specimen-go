@@ -60,3 +60,19 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 		fmt.Println(err)
 	}
 }
+
+func GenerateColumnHeader(columnIndex int) string {
+	if columnIndex < 0 {
+		return GenerateColumnHeader(0)
+	}
+
+	div := columnIndex
+	columnHeader := ""
+	module := 0
+	for div > 0 {
+		module = (div - 1) % 26
+		columnHeader = string(rune(65+module)) + columnHeader
+		div = int((div - module) / 26)
+	}
+	return columnHeader
+}
