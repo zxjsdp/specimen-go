@@ -42,12 +42,3 @@ func TestToMarkerDataSlice(t *testing.T) {
 		fmt.Println(len(markerDataMatrix.Matrix[0]), utils.GetNumberOfField(markerDataSlice[0]))
 	}
 }
-
-func TestGenerateColumnHeader(t *testing.T) {
-	columnHeaderIndex := 40
-	expectedResult := "AN"
-	actualResult := files.GenerateColumnHeader(columnHeaderIndex)
-	if expectedResult != actualResult {
-		t.Error("files.GenerateColumnHeader: result not match!", expectedResult, actualResult)
-	}
-}

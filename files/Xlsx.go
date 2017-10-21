@@ -51,28 +51,17 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 	activeSheetIndex := xlsx.GetActiveSheetIndex()
 	activeSheetName := xlsx.GetSheetName(activeSheetIndex)
 
-	// Set value of a cell.
-	xlsx.SetCellValue(activeSheetName, "A2", "Hello world.")
+	xlsx.SetCellValue(activeSheetName, "A1", "1")
+	// Set value to cells.
+	//for _, resultData := range resultDataSlice {
+	//	for columnIndex, cell := range resultData {
+	//		xlsx.SetCellValue(activeSheetName, GenerateColumnHeader(columnIndex), cell)
+	//	}
+	//}
 
 	// Save xlsx file by the given path.
 	err := xlsx.SaveAs(xlsxFileName)
 	if err != nil {
 		fmt.Println(err)
 	}
-}
-
-func GenerateColumnHeader(columnIndex int) string {
-	if columnIndex < 0 {
-		return GenerateColumnHeader(0)
-	}
-
-	div := columnIndex
-	columnHeader := ""
-	module := 0
-	for div > 0 {
-		module = (div - 1) % 26
-		columnHeader = string(rune(65+module)) + columnHeader
-		div = int((div - module) / 26)
-	}
-	return columnHeader
 }
