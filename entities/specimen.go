@@ -1,7 +1,5 @@
 package entities
 
-import "fmt"
-
 // 拉丁名
 type LatinName struct {
 	LatinNameString string   // 拉丁名全名
@@ -11,5 +9,5 @@ type LatinName struct {
 }
 
 func (l LatinName) String() string {
-	return fmt.Sprintf("%s (genus: %s, species: %s)", l.LatinNameString, l.Genus, l.Species)
+	return l.LatinNameString
 }

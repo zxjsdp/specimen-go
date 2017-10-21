@@ -63,9 +63,7 @@ func ToResultData(
 		morphologyInfo := entities.Morphology{}
 
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
-		log.Println(marker.FullLatinName)
 		if webInfo, ok := webInfoMap[marker.FullLatinName]; ok {
-			log.Println(marker.FullLatinName, ok)
 			collectingInfo.Habitat = webInfo.Habitat
 			identificationInfo.NameGiver = webInfo.NameGiver
 
