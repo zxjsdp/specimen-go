@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/zxjsdp/specimen-go/constant"
+	"github.com/zxjsdp/specimen-go/config"
 	"github.com/zxjsdp/specimen-go/entities"
 )
 
@@ -12,41 +12,41 @@ func ToResultData(marker entities.MarkerData, entryDataMap map[string]entities.E
 	var resultData entities.ResultData
 	if entry, ok := entryDataMap[marker.SpeciesNumber]; ok {
 		specimenMetaInfo := entities.SpecimenMetaInfo{
-			constant.LibraryCode,
+			config.LibraryCode,
 			marker.SerialNumber,
 			marker.Barcode,
-			constant.PatternType,
-			constant.SpecimenCondition,
-			constant.Inventory,
+			config.PatternType,
+			config.SpecimenCondition,
+			config.Inventory,
 		}
 
 		collectingInfo := entities.CollectingInfo{
 			entry.Collector,
 			entry.SpeciesNumber + "-" + marker.CopyNumber,
 			entry.CollectingDate,
-			constant.Country,
+			config.Country,
 			entry.Province + "，" + entry.City,
-			constant.District,
+			config.District,
 			entry.Altitude,
-			constant.NegativeAltitude,
+			config.NegativeAltitude,
 			entry.DetailedPlace,
-			constant.DefaultHabitat,
+			config.DefaultHabitat,
 			entry.Longitude,
 			entry.Latitude,
-			constant.Remarks2,
+			config.Remarks2,
 		}
 
 		identificationInfo := entities.IdentificationInfo{
 			entry.FamilyLatinName,
 			entry.FullLatinName,
 			entry.FullLatinName,
-			constant.DefaultNameGiver,
-			constant.Level,
+			config.DefaultNameGiver,
+			config.Level,
 			entry.ChineseName,
 			entry.Habit,
 			entry.Identifier,
 			entry.IdentifyDate,
-			constant.Remarks,
+			config.Remarks,
 		}
 
 		recordingInfo := entities.RecordingInfo{
@@ -54,14 +54,13 @@ func ToResultData(marker entities.MarkerData, entryDataMap map[string]entities.E
 			entry.RecordingDate,
 		}
 
-		morphologyInfo := entities.Morphology{
-			"", "", "", "", "", "", "",
-		}
+		morphologyInfo := entities.Morphology{}
 
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
 		if webInfo, ok := webDataMap[marker.FullLatinName]; ok {
 			collectingInfo.Habitat = webInfo.Habitat
 			identificationInfo.NameGiver = webInfo.NameGiver
+
 			morphologyInfo.BodyHeight = webInfo.BodyHeight
 			morphologyInfo.DBH = webInfo.DBH
 			morphologyInfo.Stem = webInfo.Stem
