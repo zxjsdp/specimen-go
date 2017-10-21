@@ -25,7 +25,7 @@ func specimenInfo() {
 		resultDataSlice = append(resultDataSlice, resultData)
 	}
 
-	files.SaveDataMatrix(config.DefaultReslutXlsxName, resultDataSlice)
+	files.SaveDataMatrix(config.DefaultResultXlsxName, resultDataSlice)
 }
 
 func main() {
