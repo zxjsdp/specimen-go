@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/zxjsdp/specimen-go/constant"
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
-	"github.com/zxjsdp/specimen-go/filetype"
+	"github.com/zxjsdp/specimen-go/files"
 )
 
 func generateResultData() string {
@@ -13,16 +14,20 @@ func generateResultData() string {
 }
 
 func main() {
-	entryDataMatrix := filetype.GetDataMatrix("data/data.xlsx")
+	entryDataMatrix := files.GetDataMatrix("data/data.xlsx")
 	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
 	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
 
-	markerDataMatrix := filetype.GetDataMatrix("data/query.xlsx")
+	markerDataMatrix := files.GetDataMatrix("data/query.xlsx")
 	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
 
 	webDataMap := make(map[string]entities.WebInfo)
+	resultDataSlice := make([]entities.ResultData, 0)
 	for _, marker := range markerDataSlice {
 		resultData := converters.ToResultData(marker, entryDataMap, webDataMap)
+		resultDataSlice = append(resultDataSlice, resultData)
 		fmt.Println(resultData)
 	}
+
+	files.SaveDataMatrix(constant.DefaultReslutXlsxName, resultDataSlice)
 }

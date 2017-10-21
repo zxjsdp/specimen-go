@@ -1,7 +1,9 @@
-package filetype
+package files
 
 import (
 	"fmt"
+
+	"log"
 
 	"github.com/xuri/excelize"
 	"github.com/zxjsdp/specimen-go/entities"
@@ -37,4 +39,24 @@ func GetDataMatrix(xlsxFileName string) entities.DataMatrix {
 	}
 
 	return entities.DataMatrix{Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}
+}
+
+func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) {
+	if len(resultDataSlice) == 0 {
+		log.Fatal("Cannot save data matrix to xlsx file! Empty data matrix!")
+	}
+
+	xlsx := excelize.NewFile()
+
+	activeSheetIndex := xlsx.GetActiveSheetIndex()
+	activeSheetName := xlsx.GetSheetName(activeSheetIndex)
+
+	// Set value of a cell.
+	xlsx.SetCellValue(activeSheetName, "A2", "Hello world.")
+
+	// Save xlsx file by the given path.
+	err := xlsx.SaveAs(xlsxFileName)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
