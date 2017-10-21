@@ -10,9 +10,17 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 	if len(resultDataSlice) == 0 {
 		return dataMatrix
 	}
+
+	// 获取标题信息
+	headerNameSlice, _ := resultDataSlice[0].ToOrderedResultSlice()
+	dataMatrix.Header = headerNameSlice
+
+	// 获取内容信息
 	for _, resultData := range resultDataSlice {
-		dataMatrix.Matrix = append(dataMatrix.Matrix, resultData.ToOrderedResultSlice())
+		_, orderedResultSlice := resultData.ToOrderedResultSlice()
+		dataMatrix.Matrix = append(dataMatrix.Matrix, orderedResultSlice)
 	}
+
 	dataMatrix.RowCount = len(dataMatrix.Matrix)
 	dataMatrix.ColumnCount = len(dataMatrix.Matrix[0])
 

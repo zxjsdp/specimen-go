@@ -10,49 +10,56 @@ type ResultData struct {
 }
 
 // 将结果以输出文件中的顺序排序
-func (rd ResultData) ToOrderedResultSlice() []string {
-	orderedResultSlice := []string{
-		rd.LibraryCode,       // 馆代码
-		rd.SerialNumber,      // 流水号
-		rd.Barcode,           // 条形码
-		rd.PatternType,       // 模式类型
-		rd.Inventory,         // 库存
-		rd.SpecimenCondition, // 标本状态
-		rd.Collector,         // 采集人
-		rd.CollectingNumber,  // 采集号
-		rd.CollectingDate,    // 采集日期
-		rd.Country,           // 国家
-		rd.ProvinceAndCity,   // 省市
-		rd.District,          // 区县
-		rd.Altitude,          // 海拔
-		rd.NegativeAltitude,  // 负海拔
-		rd.Family,            // 科
-		rd.Genus,             // 属
-		rd.Species,           // 种
-		rd.NameGiver,         // 定名人
-		rd.Level,             // 种下等级
-		rd.ChineseName,       // 中文名
-		rd.Identifier,        // 鉴定人
-		rd.IdentifyDate,      // 鉴定日期
-		rd.Remarks,           // 备注
-		rd.DetailedPlace,     // 地名
-		rd.Habitat,           // 生境
-		rd.Longitude,         // 经度
-		rd.Latitude,          // 纬度
-		rd.Remarks2,          // 备注2
-		rd.RecordingPerson,   // 录入员
-		rd.RecordingDate,     // 录入日期
-		rd.Habit,             // 习性（草灌）
-		rd.BodyHeight,        // 体高
-		rd.DBH,               // 胸径
-		rd.Stem,              // 茎
-		rd.Leaf,              // 叶
-		rd.Flower,            // 花
-		rd.Fruit,             // 果实
-		rd.Host,              // 寄主
+func (r ResultData) ToOrderedResultSlice() ([]string, []string) {
+	orderedResultPairs := [][]string{
+		{r.LibraryCode, "馆代码"},
+		{r.SerialNumber, " 流水号"},
+		{r.Barcode, " 条形码"},
+		{r.PatternType, " 模式类型"},
+		{r.Inventory, " 库存"},
+		{r.SpecimenCondition, " 标本状态"},
+		{r.Collector, " 采集人"},
+		{r.CollectingNumber, " 采集号"},
+		{r.CollectingDate, " 采集日期"},
+		{r.Country, " 国家"},
+		{r.ProvinceAndCity, " 省市"},
+		{r.District, " 区县"},
+		{r.Altitude, " 海拔"},
+		{r.NegativeAltitude, " 负海拔"},
+		{r.Family, " 科"},
+		{r.Genus, " 属"},
+		{r.Species, " 种"},
+		{r.NameGiver, " 定名人"},
+		{r.Level, " 种下等级"},
+		{r.ChineseName, " 中文名"},
+		{r.Identifier, " 鉴定人"},
+		{r.IdentifyDate, " 鉴定日期"},
+		{r.Remarks, " 备注"},
+		{r.DetailedPlace, " 地名"},
+		{r.Habitat, " 生境"},
+		{r.Longitude, " 经度"},
+		{r.Latitude, " 纬度"},
+		{r.Remarks2, " 备注2"},
+		{r.RecordingPerson, " 录入员"},
+		{r.RecordingDate, " 录入日期"},
+		{r.Habit, " 习性（草灌）"},
+		{r.BodyHeight, " 体高"},
+		{r.DBH, " 胸径"},
+		{r.Stem, " 茎"},
+		{r.Leaf, " 叶"},
+		{r.Flower, " 花"},
+		{r.Fruit, " 果实"},
+		{r.Host, " 寄主"},
 	}
 
-	return orderedResultSlice
+	headerNamSlice := make([]string, len(orderedResultPairs))
+	orderedResultSlice := make([]string, len(orderedResultPairs))
+	for i, pair := range orderedResultPairs {
+		headerNamSlice[i] = pair[1]
+		orderedResultSlice[i] = pair[0]
+	}
+
+	return headerNamSlice, orderedResultSlice
 }
 
 // 标本基础信息

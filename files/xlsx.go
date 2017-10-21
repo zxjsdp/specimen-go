@@ -54,9 +54,12 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 
 	// Set value to cells.
 	resultDataMatrix := converters.FromResultDataSlice(resultDataSlice)
+	for columnIndex, eachHeader := range resultDataMatrix.Header {
+		xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(0, columnIndex), eachHeader)
+	}
 	for rowIndex, row := range resultDataMatrix.Matrix {
 		for columnIndex, cell := range row {
-			xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(rowIndex, columnIndex), cell)
+			xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(rowIndex+1, columnIndex), cell)
 		}
 	}
 

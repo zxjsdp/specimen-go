@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/zxjsdp/specimen-go/constant"
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
@@ -26,7 +24,6 @@ func main() {
 	for _, marker := range markerDataSlice {
 		resultData := converters.ToResultData(marker, entryDataMap, webDataMap)
 		resultDataSlice = append(resultDataSlice, resultData)
-		fmt.Println(resultData)
 	}
 
 	files.SaveDataMatrix(constant.DefaultReslutXlsxName, resultDataSlice)
