@@ -10,6 +10,7 @@ import (
 	"github.com/zxjsdp/specimen-go/utils"
 )
 
+// （goroutine）根据拉丁名获取网络信息 map
 func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 	webInfoMap := make(map[string]entities.WebInfo)
 	latinNames = utils.RemoveDuplicates(latinNames)
@@ -45,6 +46,7 @@ func worker(id int, jobs <-chan string, results chan<- entities.WebInfo) {
 	}
 }
 
+// （同步方法）根据拉丁名获取网络信息 map
 func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 	webInfoMap := make(map[string]entities.WebInfo)
 
