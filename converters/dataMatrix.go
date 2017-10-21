@@ -31,18 +31,12 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 	markerDataSlice := make([]entities.MarkerData, 0)
 	for _, cells := range d.Matrix {
-		speciesNumber := cells[0]
-		fullLatinName := cells[1]
-		serialNumber := cells[2]
-		barcode := cells[3]
-		copyNumber := cells[4]
-
 		markerDataSlice = append(markerDataSlice, entities.MarkerData{
-			speciesNumber,
-			fullLatinName,
-			serialNumber,
-			barcode,
-			copyNumber,
+			SpeciesNumber: cells[0],
+			SerialNumber:  cells[1],
+			Barcode:       cells[2],
+			FullLatinName: cells[3],
+			CopyNumber:    cells[4],
 		})
 	}
 
@@ -66,44 +60,44 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 		altitude := cells[10]
 		collectingDate := cells[11]
 		inventory := cells[12]
-		plantType := cells[13]
+		habit := cells[13]
 		collector := cells[14]
 		identifier := cells[15]
 		identifyDate := cells[16]
-		recorder := cells[17]
+		recordingPerson := cells[17]
 		recordingDate := cells[18]
 
 		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{speciesNumber, inventory}
 		entryCollectingInfo := entities.EntryCollectingInfo{
-			province,
-			city,
-			detailedPlace,
-			latitude,
-			longitude,
-			altitude,
-			collectingDate,
-			collector,
+			Province:       province,
+			City:           city,
+			DetailedPlace:  detailedPlace,
+			Latitude:       latitude,
+			Longitude:      longitude,
+			Altitude:       altitude,
+			CollectingDate: collectingDate,
+			Collector:      collector,
 		}
 		entryIdentificationInfo := entities.EntryIdentificationInfo{
-			identifier,
-			identifyDate,
-			fullLatinName,
-			chineseName,
-			familyChineseName,
-			familyLatinName,
-			plantType,
+			Identifier:        identifier,
+			IdentifyDate:      identifyDate,
+			FullLatinName:     fullLatinName,
+			ChineseName:       chineseName,
+			FamilyChineseName: familyChineseName,
+			FamilyLatinName:   familyLatinName,
+			Habit:             habit,
 		}
 
 		entryRecordingInfo := entities.EntryRecordingInfo{
-			recorder,
-			recordingDate,
+			RecordingPerson: recordingPerson,
+			RecordingDate:   recordingDate,
 		}
 
 		entryData := entities.EntryData{
-			entrySpecimenMetaInfo,
-			entryCollectingInfo,
-			entryIdentificationInfo,
-			entryRecordingInfo,
+			EntrySpecimenMetaInfo:   entrySpecimenMetaInfo,
+			EntryCollectingInfo:     entryCollectingInfo,
+			EntryIdentificationInfo: entryIdentificationInfo,
+			EntryRecordingInfo:      entryRecordingInfo,
 		}
 
 		entryDataSlice = append(entryDataSlice, entryData)

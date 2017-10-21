@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/zxjsdp/specimen-go/config"
-	"github.com/zxjsdp/specimen-go/config/web"
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 	"github.com/zxjsdp/specimen-go/files"
+	"github.com/zxjsdp/specimen-go/web"
 )
 
 func specimenInfo() {
@@ -18,24 +16,18 @@ func specimenInfo() {
 	markerDataMatrix := files.GetDataMatrix("data/query.xlsx")
 	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
 
-	webDataMap := make(map[string]entities.WebInfo)
-	resultDataSlice := make([]entities.ResultData, 0)
-	for _, marker := range markerDataSlice {
-		resultData := converters.ToResultData(marker, entryDataMap, webDataMap)
-		resultDataSlice = append(resultDataSlice, resultData)
+	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
+	webInfoMap := web.GenerateWebInfoMap(speciesNames[:3])
+
+	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
+	for i, marker := range markerDataSlice {
+		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
+		resultDataSlice[i] = resultData
 	}
 
 	files.SaveDataMatrix(config.DefaultResultXlsxName, resultDataSlice)
 }
 
 func main() {
-	//specimenInfo()
-	webInfo := web.GenerateWebInfo("Firmiana platanifolia")
-	fmt.Println(webInfo.BodyHeight)
-	fmt.Println(webInfo.DBH)
-	fmt.Println(webInfo.Stem)
-	fmt.Println(webInfo.Leaf)
-	fmt.Println(webInfo.Flower)
-	fmt.Println(webInfo.Fruit)
-	fmt.Println(webInfo.Host)
+	specimenInfo()
 }

@@ -8,7 +8,11 @@ import (
 	"github.com/zxjsdp/specimen-go/entities"
 )
 
-func ToResultData(marker entities.MarkerData, entryDataMap map[string]entities.EntryData, webDataMap map[string]entities.WebInfo) entities.ResultData {
+func ToResultData(
+	marker entities.MarkerData,
+	entryDataMap map[string]entities.EntryData,
+	webInfoMap map[string]entities.WebInfo) entities.ResultData {
+
 	var resultData entities.ResultData
 	if entry, ok := entryDataMap[marker.SpeciesNumber]; ok {
 		specimenMetaInfo := entities.SpecimenMetaInfo{
@@ -57,7 +61,9 @@ func ToResultData(marker entities.MarkerData, entryDataMap map[string]entities.E
 		morphologyInfo := entities.Morphology{}
 
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
-		if webInfo, ok := webDataMap[marker.FullLatinName]; ok {
+		log.Println(marker.FullLatinName)
+		if webInfo, ok := webInfoMap[marker.FullLatinName]; ok {
+			log.Println(marker.FullLatinName, ok)
 			collectingInfo.Habitat = webInfo.Habitat
 			identificationInfo.NameGiver = webInfo.NameGiver
 
