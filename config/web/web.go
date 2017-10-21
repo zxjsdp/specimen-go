@@ -23,6 +23,7 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	}
 }
 
+// 从所有段落里提取植物的各类形态信息
 func getMorphologyFromMultipleParagraphs(paragraphs []string) entities.Morphology {
 	morphologySlice := make([]entities.Morphology, 0)
 	for _, paragraph := range paragraphs {
@@ -48,16 +49,28 @@ func getMorphologyFromMultipleParagraphs(paragraphs []string) entities.Morpholog
 	}
 
 	finalMorphology := entities.Morphology{
-		BodyHeight: strings.Join(bodyHeightInfoSlice, config.DefaultSeparator),
-		DBH:        strings.Join(DBHInfoSlice, config.DefaultSeparator),
-		Stem:       strings.Join(stemInfoSlice, config.DefaultSeparator),
-		Leaf:       strings.Join(leafInfoSlice, config.DefaultSeparator),
-		Flower:     strings.Join(flowerInfoSlice, config.DefaultSeparator),
-		Fruit:      strings.Join(fruitInfoSlice, config.DefaultSeparator),
-		Host:       strings.Join(hostInfoSlice, config.DefaultSeparator),
+		BodyHeight: filterAndCombineMorphologyInfo(bodyHeightInfoSlice),
+		DBH:        filterAndCombineMorphologyInfo(DBHInfoSlice),
+		Stem:       filterAndCombineMorphologyInfo(stemInfoSlice),
+		Leaf:       filterAndCombineMorphologyInfo(leafInfoSlice),
+		Flower:     filterAndCombineMorphologyInfo(flowerInfoSlice),
+		Fruit:      filterAndCombineMorphologyInfo(fruitInfoSlice),
+		Host:       filterAndCombineMorphologyInfo(hostInfoSlice),
 	}
 
 	return finalMorphology
+}
+
+func filterAndCombineMorphologyInfo(infoSlice []string) string {
+	resultSlice := make([]string, 0)
+	for _, each := range infoSlice {
+		each = strings.TrimSpace(each)
+		if len(each) > 0 {
+			resultSlice = append(resultSlice, each)
+		}
+	}
+
+	return strings.Join(resultSlice, config.DefaultSeparator) + "。"
 }
 
 // 从段落中解析形态信息

@@ -22,7 +22,7 @@ const (
 	DefaultHabitat   = ""
 	DefaultNameGiver = ""
 
-	DefaultSeparator = " | "
+	DefaultSeparator = "；"
 )
 
 // Const: io
@@ -31,13 +31,13 @@ const (
 )
 
 var (
-	BodyHeightRegexp, _ = regexp.Compile("[^，。；]*高[^，。；]]*")   // 体高
-	DBHRegexp, _        = regexp.Compile("[^，。；]]*胸径[^，。；]]*") // 胸径
-	StemRegexp, _       = regexp.Compile("[^。；]]*茎[^。；]]*")    // 茎
-	LeafRegexp, _       = regexp.Compile("[^。；]]*叶[^。；]]*")    // 叶
-	FlowerRegexp, _     = regexp.Compile("[^。；]]*花[^。；]]*")    // 花
-	FruitRegexp, _      = regexp.Compile("[^。；]]*果[^。；]]*")    // 果实
-	HostRegexp, _       = regexp.Compile("[^。；]]*寄主[^。；]]*")   // 寄主
+	BodyHeightRegexp, _ = regexp.Compile("[^，。；]*高[^，。；]*")  // 体高
+	DBHRegexp, _        = regexp.Compile("[^，。；]*胸径[^，。；]*") // 胸径
+	StemRegexp, _       = regexp.Compile("[^。；]*茎[^。；]*")    // 茎
+	LeafRegexp, _       = regexp.Compile("[^。；]*叶[^。；]*")    // 叶
+	FlowerRegexp, _     = regexp.Compile("[^。；]*花[^。；]*")    // 花
+	FruitRegexp, _      = regexp.Compile("[^。；]*果[^。；]*")    // 果实
+	HostRegexp, _       = regexp.Compile("[^。；]*寄主[^。；]*")   // 寄主
 
 	NameGiverRegexpTemplate = "(?<=<b>%s</b> <b>%s</b>)[^><]*(?=<span)" // 命名人
 )
