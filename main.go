@@ -17,7 +17,7 @@ func specimenInfo() {
 	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
 
 	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
-	webInfoMap := web.GenerateWebInfoMap(speciesNames[:3])
+	webInfoMap := web.GenerateWebInfoMap(speciesNames[:30])
 
 	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
 	for i, marker := range markerDataSlice {

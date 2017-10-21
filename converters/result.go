@@ -6,6 +6,7 @@ import (
 
 	"github.com/zxjsdp/specimen-go/config"
 	"github.com/zxjsdp/specimen-go/entities"
+	"github.com/zxjsdp/specimen-go/utils"
 )
 
 func ToResultData(
@@ -16,46 +17,47 @@ func ToResultData(
 	var resultData entities.ResultData
 	if entry, ok := entryDataMap[marker.SpeciesNumber]; ok {
 		specimenMetaInfo := entities.SpecimenMetaInfo{
-			config.LibraryCode,
-			marker.SerialNumber,
-			marker.Barcode,
-			config.PatternType,
-			config.SpecimenCondition,
-			config.Inventory,
+			LibraryCode:       config.LibraryCode,
+			SerialNumber:      marker.SerialNumber,
+			Barcode:           marker.Barcode,
+			PatternType:       config.PatternType,
+			SpecimenCondition: config.SpecimenCondition,
+			Inventory:         config.Inventory,
 		}
 
 		collectingInfo := entities.CollectingInfo{
-			entry.Collector,
-			entry.SpeciesNumber + "-" + marker.CopyNumber,
-			entry.CollectingDate,
-			config.Country,
-			entry.Province + "，" + entry.City,
-			config.District,
-			entry.Altitude,
-			config.NegativeAltitude,
-			entry.DetailedPlace,
-			config.DefaultHabitat,
-			entry.Longitude,
-			entry.Latitude,
-			config.Remarks2,
+			Collector:        entry.Collector,
+			CollectingNumber: entry.SpeciesNumber + "-" + marker.CopyNumber,
+			CollectingDate:   entry.CollectingDate,
+			Country:          config.Country,
+			ProvinceAndCity:  entry.Province + "，" + entry.City,
+			District:         config.District,
+			Altitude:         entry.Altitude,
+			NegativeAltitude: config.NegativeAltitude,
+			DetailedPlace:    entry.DetailedPlace,
+			Habitat:          config.DefaultHabitat,
+			Longitude:        entry.Longitude,
+			Latitude:         entry.Latitude,
+			Remarks2:         config.Remarks2,
 		}
 
+		latinName := utils.ParseLatinName(marker.FullLatinName)
 		identificationInfo := entities.IdentificationInfo{
-			entry.FamilyLatinName,
-			entry.FullLatinName,
-			entry.FullLatinName,
-			config.DefaultNameGiver,
-			config.Level,
-			entry.ChineseName,
-			entry.Habit,
-			entry.Identifier,
-			entry.IdentifyDate,
-			config.Remarks,
+			Family:       latinName.LatinNameString,
+			Genus:        latinName.Genus,
+			Species:      latinName.Species,
+			NameGiver:    config.DefaultNameGiver,
+			Level:        config.Level,
+			ChineseName:  entry.ChineseName,
+			Habit:        entry.Habit,
+			Identifier:   entry.Identifier,
+			IdentifyDate: entry.IdentifyDate,
+			Remarks:      config.Remarks,
 		}
 
 		recordingInfo := entities.RecordingInfo{
-			entry.RecordingPerson,
-			entry.RecordingDate,
+			RecordingPerson: entry.RecordingPerson,
+			RecordingDate:   entry.RecordingDate,
 		}
 
 		morphologyInfo := entities.Morphology{}
@@ -77,11 +79,11 @@ func ToResultData(
 		}
 
 		resultData = entities.ResultData{
-			specimenMetaInfo,
-			collectingInfo,
-			identificationInfo,
-			recordingInfo,
-			morphologyInfo,
+			SpecimenMetaInfo:   specimenMetaInfo,
+			CollectingInfo:     collectingInfo,
+			IdentificationInfo: identificationInfo,
+			RecordingInfo:      recordingInfo,
+			Morphology:         morphologyInfo,
 		}
 	} else {
 		log.Fatal(fmt.Sprintf("Entry 文件中缺失物种编号：%s", marker.SerialNumber))
