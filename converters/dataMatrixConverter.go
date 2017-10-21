@@ -54,8 +54,8 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 	entryDataSlice := make([]entities.EntryData, 0)
 	for _, cells := range d.Matrix {
 		speciesNumber := cells[0]
-		fullLatinName := cells[1]
-		chineseName := cells[2]
+		chineseName := cells[1]
+		fullLatinName := cells[2]
 		familyChineseName := cells[3]
 		familyLatinName := cells[4]
 		province := cells[5]
