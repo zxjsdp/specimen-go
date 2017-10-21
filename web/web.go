@@ -12,6 +12,41 @@ import (
 
 func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 	webInfoMap := make(map[string]entities.WebInfo)
+	latinNames = utils.RemoveDuplicates(latinNames)
+	size := len(latinNames)
+
+	jobChannel := make(chan string, size)
+	resultWebInfoChannel := make(chan entities.WebInfo, size)
+
+	for i := 1; i <= config.WORKER_POOL_SIZE; i++ {
+		go worker(i, jobChannel, resultWebInfoChannel)
+	}
+
+	for _, latinName := range latinNames {
+		jobChannel <- latinName
+	}
+
+	close(jobChannel)
+
+	for i := 1; i <= size; i++ {
+		webInfo := <-resultWebInfoChannel
+		webInfoMap[webInfo.FullLatinName] = webInfo
+	}
+
+	return webInfoMap
+}
+
+func worker(id int, jobs <-chan string, results chan<- entities.WebInfo) {
+	for latinName := range jobs {
+		log.Println("worker", id, "started job", latinName)
+		webInfo := GenerateWebInfo(latinName)
+		log.Println("worker", id, "finished job", latinName)
+		results <- webInfo
+	}
+}
+
+func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
+	webInfoMap := make(map[string]entities.WebInfo)
 
 	latinNames = utils.RemoveDuplicates(latinNames)
 	for _, latinName := range latinNames {
@@ -29,9 +64,10 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	morphology := getMorphologyFromMultipleParagraphs(paragraphs)
 
 	return entities.WebInfo{
-		Morphology: morphology,
-		NameGiver:  "default",
-		Habitat:    "default",
+		FullLatinName: latinNameString,
+		Morphology:    morphology,
+		NameGiver:     "default",
+		Habitat:       "default",
 	}
 }
 

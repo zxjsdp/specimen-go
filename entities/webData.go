@@ -2,7 +2,8 @@ package entities
 
 // 网络信息
 type WebInfo struct {
-	Morphology        // 植物形态
-	NameGiver  string // 定名人
-	Habitat    string //习性
+	FullLatinName string
+	Morphology           // 植物形态
+	NameGiver     string // 定名人
+	Habitat       string //习性
 }
