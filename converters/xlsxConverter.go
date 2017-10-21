@@ -21,6 +21,6 @@ func GenerateColumnHeader(columnIndex int) string {
 
 // 根据 row index 及 column index 生成 Excel axis 信息（A1、B2、...）
 func GenerateAxis(rowIndex, columnIndex int) string {
-	columnHeaderLetter := GenerateColumnHeader(columnIndex)
+	columnHeaderLetter := GenerateColumnHeader(columnIndex + 1)
 	return fmt.Sprintf("%s%d", columnHeaderLetter, rowIndex+1)
 }

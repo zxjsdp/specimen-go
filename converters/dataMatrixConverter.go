@@ -11,7 +11,7 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 		return dataMatrix
 	}
 	for _, resultData := range resultDataSlice {
-		dataMatrix.Matrix = append(dataMatrix.Matrix, ToOrderedResultData(resultData))
+		dataMatrix.Matrix = append(dataMatrix.Matrix, resultData.ToOrderedResultSlice())
 	}
 	dataMatrix.RowCount = len(dataMatrix.Matrix)
 	dataMatrix.ColumnCount = len(dataMatrix.Matrix[0])

@@ -17,7 +17,7 @@ func TestGenerateColumnHeader(t *testing.T) {
 
 func TestGenerateAxis(t *testing.T) {
 	rowIndex := 5
-	columnHeaderIndex := 39
+	columnHeaderIndex := 38
 	expectedResult := "AM6"
 	actualResult := converters.GenerateAxis(rowIndex, columnHeaderIndex)
 	if expectedResult != actualResult {

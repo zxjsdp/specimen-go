@@ -9,6 +9,52 @@ type ResultData struct {
 	Morphology         // 植物形态
 }
 
+// 将结果以输出文件中的顺序排序
+func (rd ResultData) ToOrderedResultSlice() []string {
+	orderedResultSlice := []string{
+		rd.LibraryCode,       // 馆代码
+		rd.SerialNumber,      // 流水号
+		rd.Barcode,           // 条形码
+		rd.PatternType,       // 模式类型
+		rd.Inventory,         // 库存
+		rd.SpecimenCondition, // 标本状态
+		rd.Collector,         // 采集人
+		rd.CollectingNumber,  // 采集号
+		rd.CollectingDate,    // 采集日期
+		rd.Country,           // 国家
+		rd.ProvinceAndCity,   // 省市
+		rd.District,          // 区县
+		rd.Altitude,          // 海拔
+		rd.NegativeAltitude,  // 负海拔
+		rd.Family,            // 科
+		rd.Genus,             // 属
+		rd.Species,           // 种
+		rd.NameGiver,         // 定名人
+		rd.Level,             // 种下等级
+		rd.ChineseName,       // 中文名
+		rd.Identifier,        // 鉴定人
+		rd.IdentifyDate,      // 鉴定日期
+		rd.Remarks,           // 备注
+		rd.DetailedPlace,     // 地名
+		rd.Habitat,           // 生境
+		rd.Longitude,         // 经度
+		rd.Latitude,          // 纬度
+		rd.Remarks2,          // 备注2
+		rd.RecordingPerson,   // 录入员
+		rd.RecordingDate,     // 录入日期
+		rd.Habit,             // 习性（草灌）
+		rd.BodyHeight,        // 体高
+		rd.DBH,               // 胸径
+		rd.Stem,              // 茎
+		rd.Leaf,              // 叶
+		rd.Flower,            // 花
+		rd.Fruit,             // 果实
+		rd.Host,              // 寄主
+	}
+
+	return orderedResultSlice
+}
+
 // 标本基础信息
 type SpecimenMetaInfo struct {
 	LibraryCode       string // 馆代码

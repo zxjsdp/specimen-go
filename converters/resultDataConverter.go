@@ -8,10 +8,6 @@ import (
 	"github.com/zxjsdp/specimen-go/entities"
 )
 
-func ToOrderedResultData(resultData entities.ResultData) []string {
-	return []string{}
-}
-
 func ToResultData(marker entities.MarkerData, entryDataMap map[string]entities.EntryData, webDataMap map[string]entities.WebInfo) entities.ResultData {
 	var resultData entities.ResultData
 	if entry, ok := entryDataMap[marker.SpeciesNumber]; ok {
