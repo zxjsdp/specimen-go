@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/xuri/excelize"
+	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 )
 
@@ -51,13 +52,13 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 	activeSheetIndex := xlsx.GetActiveSheetIndex()
 	activeSheetName := xlsx.GetSheetName(activeSheetIndex)
 
-	xlsx.SetCellValue(activeSheetName, "A1", "1")
 	// Set value to cells.
-	//for _, resultData := range resultDataSlice {
-	//	for columnIndex, cell := range resultData {
-	//		xlsx.SetCellValue(activeSheetName, GenerateColumnHeader(columnIndex), cell)
-	//	}
-	//}
+	resultDataMatrix := converters.FromResultDataSlice(resultDataSlice)
+	for rowIndex, row := range resultDataMatrix.Matrix {
+		for columnIndex, cell := range row {
+			xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(rowIndex, columnIndex), cell)
+		}
+	}
 
 	// Save xlsx file by the given path.
 	err := xlsx.SaveAs(xlsxFileName)

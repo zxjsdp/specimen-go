@@ -1,7 +1,25 @@
 package converters
 
-import "github.com/zxjsdp/specimen-go/entities"
+import (
+	"github.com/zxjsdp/specimen-go/entities"
+)
 
+// 由 ResultData slice 生成用于写入输出 Excel 文件的 DataMatrix
+func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMatrix {
+	dataMatrix := entities.DataMatrix{}
+	if len(resultDataSlice) == 0 {
+		return dataMatrix
+	}
+	for _, resultData := range resultDataSlice {
+		dataMatrix.Matrix = append(dataMatrix.Matrix, ToOrderedResultData(resultData))
+	}
+	dataMatrix.RowCount = len(dataMatrix.Matrix)
+	dataMatrix.ColumnCount = len(dataMatrix.Matrix[0])
+
+	return dataMatrix
+}
+
+// DataMatrix 转换至 MarkerData slice
 func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 	markerDataSlice := make([]entities.MarkerData, 0)
 	for _, cells := range d.Matrix {
@@ -23,6 +41,7 @@ func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 	return markerDataSlice
 }
 
+// DataMatrix 转换至 EntityData slice
 func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 	entryDataSlice := make([]entities.EntryData, 0)
 	for _, cells := range d.Matrix {
