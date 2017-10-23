@@ -21,19 +21,13 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 	jobChannel := make(chan string, size)
 	resultWebInfoChannel := make(chan entities.WebInfo, size)
 
-	fmt.Printf("111")
-
 	for i := 1; i <= config.WORKER_POOL_SIZE; i++ {
 		go worker(i, jobChannel, resultWebInfoChannel)
 	}
 
-	fmt.Printf("222")
-
 	for _, latinName := range latinNames {
 		jobChannel <- latinName
 	}
-
-	fmt.Printf("333")
 
 	close(jobChannel)
 
@@ -41,8 +35,6 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 		webInfo := <-resultWebInfoChannel
 		webInfoMap[webInfo.FullLatinName] = webInfo
 	}
-
-	fmt.Printf("444")
 
 	return webInfoMap
 }
