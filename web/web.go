@@ -4,6 +4,8 @@ import (
 	"log"
 	"strings"
 
+	"fmt"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/zxjsdp/specimen-go/config"
 	"github.com/zxjsdp/specimen-go/entities"
@@ -19,13 +21,19 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 	jobChannel := make(chan string, size)
 	resultWebInfoChannel := make(chan entities.WebInfo, size)
 
+	fmt.Printf("111")
+
 	for i := 1; i <= config.WORKER_POOL_SIZE; i++ {
 		go worker(i, jobChannel, resultWebInfoChannel)
 	}
 
+	fmt.Printf("222")
+
 	for _, latinName := range latinNames {
 		jobChannel <- latinName
 	}
+
+	fmt.Printf("333")
 
 	close(jobChannel)
 
@@ -33,6 +41,8 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 		webInfo := <-resultWebInfoChannel
 		webInfoMap[webInfo.FullLatinName] = webInfo
 	}
+
+	fmt.Printf("444")
 
 	return webInfoMap
 }
@@ -51,7 +61,8 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 	webInfoMap := make(map[string]entities.WebInfo)
 
 	latinNames = utils.RemoveDuplicates(latinNames)
-	for _, latinName := range latinNames {
+	for i, latinName := range latinNames {
+		fmt.Println(i + 1)
 		webInfoMap[latinName] = GenerateWebInfo(latinName)
 	}
 
@@ -60,11 +71,18 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 
 func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	latinName := utils.ParseLatinName(latinNameString)
-	log.Println(latinName)
+	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
 	url := generateUrl(latinName)
 	paragraphs := parseParagraphs(url)
-	bestMatchParagraph := pickBestMatchedParagraph(paragraphs)
+	fmt.Printf("    <- 获取到物种信息：%s\n", latinNameString)
+
+	fmt.Printf("    -> 开始寻找最匹配段落：%s\n", latinNameString)
+	bestMatchParagraph := pickBestMatchedParagraph(latinNameString, paragraphs)
+	fmt.Printf("    <- 找到最匹配段落：%s\n", latinNameString)
+
+	fmt.Printf("    -> 开始从最匹配段落中提取形态描述信息：%s\n", latinNameString)
 	morphology := getMorphologyFromMultipleParagraphs([]string{bestMatchParagraph})
+	fmt.Printf("    <- 从最匹配段落中提取形态描述信息结束：%s\n", latinNameString)
 
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
@@ -74,7 +92,7 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	}
 }
 
-func pickBestMatchedParagraph(paragraphs []string) string {
+func pickBestMatchedParagraph(latinNameString string, paragraphs []string) string {
 	// TODO, 需要实现：检查所有组合，找到第一个全部包含的段落
 	// [A, B, C, D, E], ... 是否有全部包含的段落
 	// [A, B, C, D], [A, B, C, E], ... 是否有全部包含的段落

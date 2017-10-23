@@ -16,15 +16,21 @@ import (
 )
 
 func specimenInfo(markerDataFile, entryDataFile, outputDataFile string) {
+	fmt.Printf("开始读取 entry 数据文件 ...\n")
 	entryDataMatrix := files.GetDataMatrix(entryDataFile)
 	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
 	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
+	fmt.Printf("读取 entry 数据结束！\n")
 
+	fmt.Printf("开始读取 marker 数据文件 ...\n")
 	markerDataMatrix := files.GetDataMatrix(markerDataFile)
 	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
+	fmt.Printf("读取 marker 数据结束！\n")
 
+	fmt.Printf("开始提取网络信息 ...\n")
 	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
 	webInfoMap := web.GenerateWebInfoMap(speciesNames)
+	fmt.Printf("提取网络信息结束！\n")
 
 	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
 	for i, marker := range markerDataSlice {
@@ -32,6 +38,7 @@ func specimenInfo(markerDataFile, entryDataFile, outputDataFile string) {
 		resultDataSlice[i] = resultData
 	}
 
+	fmt.Printf("开始将结果信息写入 xlsx 输出文件...\n")
 	files.SaveDataMatrix(outputDataFile, resultDataSlice)
 }
 

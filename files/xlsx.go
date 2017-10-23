@@ -65,7 +65,10 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 
 	// Save xlsx file by the given path.
 	err := xlsx.SaveAs(xlsxFileName)
+
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		fmt.Printf("已将结果写入文件：%s\n", xlsxFileName)
 	}
 }
