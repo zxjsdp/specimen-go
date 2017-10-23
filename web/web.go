@@ -63,7 +63,8 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	log.Println(latinName)
 	url := generateUrl(latinName)
 	paragraphs := parseParagraphs(url)
-	morphology := getMorphologyFromMultipleParagraphs(paragraphs)
+	bestMatchParagraph := pickBestMatchedParagraph(paragraphs)
+	morphology := getMorphologyFromMultipleParagraphs([]string{bestMatchParagraph})
 
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
@@ -71,6 +72,58 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 		NameGiver:     "default",
 		Habitat:       "default",
 	}
+}
+
+func pickBestMatchedParagraph(paragraphs []string) string {
+	// TODO, 需要实现：检查所有组合，找到第一个全部包含的段落
+	// [A, B, C, D, E], ... 是否有全部包含的段落
+	// [A, B, C, D], [A, B, C, E], ... 是否有全部包含的段落
+	// [A, B, C], [A, B, D], ... } ... 是否有全部包含的段落
+	// [A, B], [A, C], ... } ... 是否有全部包含的段落
+
+	// 目前先使用已有的逻辑
+	paragraphContainsAllKeywords := ""
+	for _, paragraph := range paragraphs {
+		paragraphContainsAllKeywords = checkIfParagraphThatContainsAllKeywords(paragraph, config.AllKeywords)
+		if paragraphContainsAllKeywords != "" {
+			return paragraph
+		}
+	}
+
+	for _, paragraph := range paragraphs {
+		paragraphContainsAllKeywords = checkIfParagraphThatContainsAllKeywords(paragraph, config.ModerateKeywords)
+		if paragraphContainsAllKeywords != "" {
+			return paragraph
+		}
+	}
+
+	for _, paragraph := range paragraphs {
+		paragraphContainsAllKeywords = checkIfParagraphThatContainsAllKeywords(paragraph, config.RelaxedKeywords)
+		if paragraphContainsAllKeywords != "" {
+			return paragraph
+		}
+	}
+
+	return paragraphContainsAllKeywords
+}
+
+func checkIfParagraphThatContainsAllKeywords(paragraph string, keywords []string) string {
+	if strings.TrimSpace(paragraph) == "" {
+		return ""
+	}
+	allKeywordInParagraph := true
+	for _, keyword := range keywords {
+		if !strings.Contains(paragraph, keyword) {
+			allKeywordInParagraph = false
+		}
+		if !allKeywordInParagraph {
+			break
+		}
+	}
+	if allKeywordInParagraph {
+		return paragraph
+	}
+	return ""
 }
 
 // 从所有段落里提取植物的各类形态信息
