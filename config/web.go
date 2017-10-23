@@ -15,7 +15,7 @@ const (
 
 // goroutine
 const (
-	WORKER_POOL_SIZE = 10
+	WORKER_POOL_SIZE = 30
 )
 
 // filtering keywords
