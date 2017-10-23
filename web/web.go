@@ -39,9 +39,9 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 
 func worker(id int, jobs <-chan string, results chan<- entities.WebInfo) {
 	for latinName := range jobs {
-		log.Println("worker", id, "started job", latinName)
+		//log.Println("worker", id, "started job", latinName)
 		webInfo := GenerateWebInfo(latinName)
-		log.Println("worker", id, "finished job", latinName)
+		//log.Println("worker", id, "finished job", latinName)
 		results <- webInfo
 	}
 }
