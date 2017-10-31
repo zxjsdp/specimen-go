@@ -29,7 +29,7 @@ func (r ResultData) ToOrderedResultSlice() ([]string, []string) {
 		{r.Family, " 科"},
 		{r.Genus, " 属"},
 		{r.Species, " 种"},
-		{r.NameGiver, " 定名人"},
+		{r.NamePublisher, " 定名人"},
 		{r.Level, " 种下等级"},
 		{r.ChineseName, " 中文名"},
 		{r.Identifier, " 鉴定人"},
@@ -91,16 +91,16 @@ type CollectingInfo struct {
 
 // 鉴定信息
 type IdentificationInfo struct {
-	Family       string // 科
-	Genus        string // 属
-	Species      string // 种
-	NameGiver    string // 定名人
-	Level        string // 种下等级
-	ChineseName  string // 中文名
-	Habit        string // 习性（草灌）
-	Identifier   string // 鉴定人
-	IdentifyDate string // 鉴定日期
-	Remarks      string // 备注
+	Family        string // 科
+	Genus         string // 属
+	Species       string // 种
+	NamePublisher string // 定名人
+	Level         string // 种下等级
+	ChineseName   string // 中文名
+	Habit         string // 习性（草灌）
+	Identifier    string // 鉴定人
+	IdentifyDate  string // 鉴定日期
+	Remarks       string // 备注
 }
 
 // 录入信息

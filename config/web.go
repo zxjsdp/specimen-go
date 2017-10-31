@@ -34,6 +34,6 @@ var (
 	FruitRegexp, _      = regexp.Compile("[^。；]*果[^。；]*")    // 果实
 	HostRegexp, _       = regexp.Compile("[^。；]*寄主[^。；]*")   // 寄主
 
-	SpeciesInfoDiv          = "div#spinfoDiv" // 物种信息 div id: spinfoDiv
-	NameGiverRegexpTemplate = "%s %s(.*)"     // 命名人
+	SpeciesInfoDiv              = "div#spinfoDiv" // 物种信息 div id: spinfoDiv
+	NamePublisherRegexpTemplate = "%s %s(.*)"     // 命名人
 )

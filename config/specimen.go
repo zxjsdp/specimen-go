@@ -17,8 +17,8 @@ const (
 
 // Const: default placeholder value
 const (
-	DefaultHabitat   = ""
-	DefaultNameGiver = ""
+	DefaultHabitat       = ""
+	DefaultNamePublisher = ""
 
 	DefaultSeparator = "；"
 )

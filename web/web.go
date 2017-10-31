@@ -68,8 +68,8 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	latinName := utils.ParseLatinName(latinNameString)
 	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
-	paragraphs, nameGiver := parseParagraphs(latinName)
-	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, nameGiver)
+	paragraphs, namePublisher := parseParagraphs(latinName)
+	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, namePublisher)
 
 	fmt.Printf("    -> 开始寻找最匹配段落：%s\n", latinNameString)
 	bestMatchParagraph := pickBestMatchedParagraph(latinNameString, paragraphs)
@@ -82,13 +82,13 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
 		Morphology:    morphology,
-		NameGiver:     nameGiver,
+		NamePublisher: namePublisher,
 		Habitat:       "",
 	}
 }
 
 // 提取命名人信息
-func extractNameGiver(latinName entities.LatinName, doc *goquery.Document) string {
+func extractNamePublisher(latinName entities.LatinName, doc *goquery.Document) string {
 	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
 	targetText := ""
 	spinfoDiv.Find("div").Each(func(i int, div *goquery.Selection) {
@@ -97,24 +97,24 @@ func extractNameGiver(latinName entities.LatinName, doc *goquery.Document) strin
 		}
 	})
 
-	nameGiverRegexp, err := regexp.Compile(
-		fmt.Sprintf(config.NameGiverRegexpTemplate, latinName.Genus, latinName.Species))
+	namePublisherRegexp, err := regexp.Compile(
+		fmt.Sprintf(config.NamePublisherRegexpTemplate, latinName.Genus, latinName.Species))
 
 	if err != nil {
 		return ""
 	}
 
-	nameGiverSlice := nameGiverRegexp.FindAllString(targetText, -1)
+	namePublisherSlice := namePublisherRegexp.FindAllString(targetText, -1)
 
-	if len(nameGiverSlice) == 0 {
+	if len(namePublisherSlice) == 0 {
 		return ""
 	}
 
-	nameGiver := nameGiverSlice[0]
-	nameGiver = strings.Replace(nameGiver, latinName.Genus, "", -1)
-	nameGiver = strings.Replace(nameGiver, latinName.Species, "", -1)
+	namePublisher := namePublisherSlice[0]
+	namePublisher = strings.Replace(namePublisher, latinName.Genus, "", -1)
+	namePublisher = strings.Replace(namePublisher, latinName.Species, "", -1)
 
-	return strings.TrimSpace(nameGiver)
+	return strings.TrimSpace(namePublisher)
 }
 
 // 选择最符合条件的段落
@@ -260,9 +260,9 @@ func parseParagraphs(latinName entities.LatinName) ([]string, string) {
 		paragraphs = append(paragraphs, s.Text())
 	})
 
-	nameGiver := extractNameGiver(latinName, doc)
+	namePublisher := extractNamePublisher(latinName, doc)
 
-	return paragraphs, nameGiver
+	return paragraphs, namePublisher
 }
 
 // 根据拉丁名拼接 URL
