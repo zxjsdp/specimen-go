@@ -1,10 +1,13 @@
 package web
 
 import (
-	"log"
 	"strings"
 
 	"fmt"
+
+	"log"
+
+	"regexp"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/zxjsdp/specimen-go/config"
@@ -21,7 +24,7 @@ func GenerateWebInfoMap(latinNames []string) map[string]entities.WebInfo {
 	jobChannel := make(chan string, size)
 	resultWebInfoChannel := make(chan entities.WebInfo, size)
 
-	for i := 1; i <= config.WORKER_POOL_SIZE; i++ {
+	for i := 1; i <= config.WorkerPoolSize; i++ {
 		go worker(i, jobChannel, resultWebInfoChannel)
 	}
 
@@ -61,12 +64,12 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 	return webInfoMap
 }
 
+// 获取并处理网络信息
 func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	latinName := utils.ParseLatinName(latinNameString)
 	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
-	url := generateUrl(latinName)
-	paragraphs := parseParagraphs(url)
-	fmt.Printf("    <- 获取到物种信息：%s\n", latinNameString)
+	paragraphs, namePublisher := parseParagraphs(latinName)
+	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, namePublisher)
 
 	fmt.Printf("    -> 开始寻找最匹配段落：%s\n", latinNameString)
 	bestMatchParagraph := pickBestMatchedParagraph(latinNameString, paragraphs)
@@ -79,11 +82,42 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
 		Morphology:    morphology,
-		NameGiver:     "default",
-		Habitat:       "default",
+		NamePublisher: namePublisher,
+		Habitat:       "",
 	}
 }
 
+// 提取命名人信息
+func extractNamePublisher(latinName entities.LatinName, doc *goquery.Document) string {
+	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
+	targetText := ""
+	spinfoDiv.Find("div").Each(func(i int, div *goquery.Selection) {
+		if i == 0 {
+			targetText = div.Text()
+		}
+	})
+
+	namePublisherRegexp, err := regexp.Compile(
+		fmt.Sprintf(config.NamePublisherRegexpTemplate, latinName.Genus, latinName.Species))
+
+	if err != nil {
+		return ""
+	}
+
+	namePublisherSlice := namePublisherRegexp.FindAllString(targetText, -1)
+
+	if len(namePublisherSlice) == 0 {
+		return ""
+	}
+
+	namePublisher := namePublisherSlice[0]
+	namePublisher = strings.Replace(namePublisher, latinName.Genus, "", -1)
+	namePublisher = strings.Replace(namePublisher, latinName.Species, "", -1)
+
+	return strings.TrimSpace(namePublisher)
+}
+
+// 选择最符合条件的段落
 func pickBestMatchedParagraph(latinNameString string, paragraphs []string) string {
 	// TODO, 需要实现：检查所有组合，找到第一个全部包含的段落
 	// [A, B, C, D, E], ... 是否有全部包含的段落
@@ -117,6 +151,7 @@ func pickBestMatchedParagraph(latinNameString string, paragraphs []string) strin
 	return paragraphContainsAllKeywords
 }
 
+// 检测段落是否满足特定的关键字条件
 func checkIfParagraphThatContainsAllKeywords(paragraph string, keywords []string) string {
 	if strings.TrimSpace(paragraph) == "" {
 		return ""
@@ -174,6 +209,7 @@ func getMorphologyFromMultipleParagraphs(paragraphs []string) entities.Morpholog
 	return finalMorphology
 }
 
+// 拼接形态信息
 func filterAndCombineMorphologyInfo(infoSlice []string) string {
 	resultSlice := make([]string, 0)
 	for _, each := range infoSlice {
@@ -211,7 +247,9 @@ func parseMorphologyFromContent(paragraph string) entities.Morphology {
 	}
 }
 
-func parseParagraphs(url string) []string {
+// 从网络信息中提取段落及命名人信息
+func parseParagraphs(latinName entities.LatinName) ([]string, string) {
+	url := generateUrl(latinName)
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
@@ -222,9 +260,12 @@ func parseParagraphs(url string) []string {
 		paragraphs = append(paragraphs, s.Text())
 	})
 
-	return paragraphs
+	namePublisher := extractNamePublisher(latinName, doc)
+
+	return paragraphs, namePublisher
 }
 
+// 根据拉丁名拼接 URL
 func generateUrl(latinName entities.LatinName) string {
-	return config.URL_PREFIX_EFLORA + strings.Join(latinName.Elements, config.URL_BLANK_SEPERATOR)
+	return config.URLPrefixEFLORA + strings.Join(latinName.Elements, config.URLBlankSeparator)
 }
