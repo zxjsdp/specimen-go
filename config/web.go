@@ -7,15 +7,15 @@ import (
 // web
 const (
 	// 中国植物志 URL
-	URL_PREFIX_EFLORA = "http://frps.eflora.cn/frps/"
+	URLPrefixEFLORA = "http://frps.eflora.cn/frps/"
 
 	// URL 分隔符
-	URL_BLANK_SEPERATOR = "%20"
+	URLBlankSeparator = "%20"
 )
 
 // goroutine
 const (
-	WORKER_POOL_SIZE = 50
+	WorkerPoolSize = 40 // worker poll size
 )
 
 // filtering keywords
@@ -34,5 +34,6 @@ var (
 	FruitRegexp, _      = regexp.Compile("[^。；]*果[^。；]*")    // 果实
 	HostRegexp, _       = regexp.Compile("[^。；]*寄主[^。；]*")   // 寄主
 
-	NameGiverRegexpTemplate = "(?<=<b>%s</b> <b>%s</b>)[^><]*(?=<span)" // 命名人
+	SpeciesInfoDiv          = "div#spinfoDiv" // 物种信息 div id: spinfoDiv
+	NameGiverRegexpTemplate = "%s %s(.*)"     // 命名人
 )
