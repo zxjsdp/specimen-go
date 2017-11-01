@@ -4,7 +4,7 @@ package utils
 //
 // Usage:
 // utils.GenerateCombinations([]string{"茎", "叶", "花", "果"}, 2, func(c []string) {
-//     fmt.Println(c)
+//     log.Println(c)
 // })
 //
 // Results:

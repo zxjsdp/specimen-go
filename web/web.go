@@ -57,7 +57,7 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 
 	latinNames = utils.RemoveDuplicates(latinNames)
 	for i, latinName := range latinNames {
-		fmt.Println(i + 1)
+		log.Println(i + 1)
 		webInfoMap[latinName] = GenerateWebInfo(latinName)
 	}
 
