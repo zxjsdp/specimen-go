@@ -1,9 +1,8 @@
 package test
 
 import (
+	"log"
 	"testing"
-
-	"fmt"
 
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/files"
@@ -39,6 +38,6 @@ func TestToMarkerDataSlice(t *testing.T) {
 	if len(markerDataMatrix.Matrix) != len(markerDataSlice) ||
 		len(markerDataMatrix.Matrix[0]) != utils.GetNumberOfField(markerDataSlice[0]) {
 		t.Error("converters.ToMarkerDatas: failed to convert DataMatrix to MarkerDataSlice")
-		fmt.Println(len(markerDataMatrix.Matrix[0]), utils.GetNumberOfField(markerDataSlice[0]))
+		log.Println(len(markerDataMatrix.Matrix[0]), utils.GetNumberOfField(markerDataSlice[0]))
 	}
 }

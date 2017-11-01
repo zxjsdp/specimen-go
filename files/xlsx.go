@@ -33,10 +33,8 @@ func GetDataMatrix(xlsxFileName string) entities.DataMatrix {
 		cellsPerRow := make([]string, 0)
 		for _, cell := range row {
 			cellsPerRow = append(cellsPerRow, cell)
-			//fmt.Printf(cell, "\t")
 		}
 		matrix = append(matrix, cellsPerRow)
-		//fmt.Println()
 	}
 
 	return entities.DataMatrix{Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}
@@ -67,8 +65,8 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 	err := xlsx.SaveAs(xlsxFileName)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	} else {
-		fmt.Printf("    <- 已将结果写入文件：%s\n", xlsxFileName)
+		log.Printf("    <- 已将结果写入文件：%s\n", xlsxFileName)
 	}
 }

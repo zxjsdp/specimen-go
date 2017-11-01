@@ -13,38 +13,8 @@ import (
 	"github.com/zxjsdp/specimen-go/files"
 	"github.com/zxjsdp/specimen-go/utils"
 	"github.com/zxjsdp/specimen-go/web"
+	"github.com/zxjsdp/specimen-go/specimen"
 )
-
-func specimenInfo(markerDataFile, entryDataFile, outputDataFile string) {
-	fmt.Printf("%%01  开始读取 entry 数据文件 ...\n")
-	entryDataMatrix := files.GetDataMatrix(entryDataFile)
-	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
-	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
-	fmt.Printf("%%09  读取 entry 数据结束！\n")
-
-	fmt.Printf("%%10  开始读取 marker 数据文件 ...\n")
-	markerDataMatrix := files.GetDataMatrix(markerDataFile)
-	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
-	fmt.Printf("%%19  读取 marker 数据结束！\n")
-
-	fmt.Printf("%%20  开始提取网络信息 ...\n")
-	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
-	webInfoMap := web.GenerateWebInfoMap(speciesNames)
-	fmt.Printf("%%90  提取网络信息结束！\n")
-
-	fmt.Printf("%%91  开始整合本地数据及网络信息 ...\n")
-	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
-	for i, marker := range markerDataSlice {
-		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
-		resultDataSlice[i] = resultData
-	}
-	fmt.Printf("%%94  整合本地数据及网络信息结束！\n")
-
-	fmt.Printf("%%95  开始将结果信息写入 xlsx 输出文件...\n")
-	files.SaveDataMatrix(outputDataFile, resultDataSlice)
-
-	fmt.Printf("%%100 任务完成！\n")
-}
 
 // 解析命令行，并输出 query 文件名、data 文件名、output 文件名
 func parseArgument() (string, string, string) {
@@ -65,5 +35,5 @@ func parseArgument() (string, string, string) {
 
 func main() {
 	markerDataFile, entryDataFile, outputDataFile := parseArgument()
-	specimenInfo(markerDataFile, entryDataFile, outputDataFile)
+	specimen.RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile)
 }
