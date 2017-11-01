@@ -19,6 +19,13 @@
 编译为可执行文件
 
     go build -o specimen-go
+    
+Windows 下 GUI 版本编译方式（MinGW）
+
+    go get github.com/lxn/walk
+    cd "$GOPATH/src/github.com/zxjsdp/specimen-go/gui/windows"
+    go build -ldflags="-H windowsgui" -o specimen-go.exe
+    .\specimen-go.exe
    
 运行测试用例
 
