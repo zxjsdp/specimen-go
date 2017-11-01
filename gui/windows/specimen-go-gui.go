@@ -15,7 +15,10 @@ import (
 
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
-	"github.com/zxjsdp/specimen-go/specimen"
+	"github.com/zxjsdp/specimen-go/converters"
+	"github.com/zxjsdp/specimen-go/entities"
+	"github.com/zxjsdp/specimen-go/files"
+	"github.com/zxjsdp/specimen-go/web"
 )
 
 const (
@@ -37,6 +40,7 @@ type MyMainWindow struct {
 	openButton3 *walk.PushButton
 	statusBar   *walk.Label
 	startButton *walk.PushButton
+	progressBar *walk.ProgressBar
 	logView     *LogView
 
 	previousFilePath string
@@ -205,9 +209,6 @@ func RunMainWindow() {
 							dataFile := mw.combo2.Text()
 							outputFile := mw.combo3.Text()
 
-							log.Println(queryFile)
-							log.Println(dataFile)
-							log.Println(outputFile)
 							if len(queryFile) == 0 || len(dataFile) == 0 || len(outputFile) == 0 {
 								mw.statusBar.SetText("参数无效！")
 								return
@@ -216,6 +217,12 @@ func RunMainWindow() {
 						},
 					},
 				},
+			},
+			ProgressBar{
+				AssignTo: &mw.progressBar,
+				MinValue: 0,
+				MaxValue: 100,
+				Font:     Font{PointSize: 6},
 			},
 		},
 	}.Create()); err != nil {
@@ -239,7 +246,45 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	mw.startButton.SetText("Processing...")
 	defer mw.startButton.SetEnabled(true)
 	defer mw.startButton.SetText("Start")
-	specimen.RunSpecimenInfo(queryFile, dataFile, outputFile)
+
+	log.Printf("开始读取 entry 数据文件 ...\n")
+	mw.progressBar.SetValue(1)
+	entryDataMatrix := files.GetDataMatrix(dataFile)
+	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
+	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
+	log.Printf("读取 entry 数据结束！\n")
+	mw.progressBar.SetValue(10)
+
+	log.Printf("开始读取 marker 数据文件 ...\n")
+	mw.progressBar.SetValue(20)
+	markerDataMatrix := files.GetDataMatrix(queryFile)
+	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
+	log.Printf("读取 marker 数据结束！\n")
+	mw.progressBar.SetValue(30)
+
+	log.Printf("开始提取网络信息，这可能会花费一些时间，请耐心等待 ...\n")
+	mw.progressBar.SetValue(40)
+	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
+	webInfoMap := web.GenerateWebInfoMap(speciesNames)
+	log.Printf("提取网络信息结束！\n")
+	mw.progressBar.SetValue(60)
+
+	log.Printf("开始整合本地数据及网络信息 ...\n")
+	mw.progressBar.SetValue(70)
+	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
+	for i, marker := range markerDataSlice {
+		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
+		resultDataSlice[i] = resultData
+	}
+	log.Printf("整合本地数据及网络信息结束！\n")
+	mw.progressBar.SetValue(80)
+
+	log.Printf("开始将结果信息写入 xlsx 输出文件...\n")
+	mw.progressBar.SetValue(90)
+	files.SaveDataMatrix(outputFile, resultDataSlice)
+
+	log.Printf("任务完成！\n")
+	mw.progressBar.SetValue(100)
 }
 
 func (mw *MyMainWindow) openButton_Triggered() {
