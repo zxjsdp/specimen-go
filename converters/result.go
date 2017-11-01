@@ -43,16 +43,16 @@ func ToResultData(
 
 		latinName := utils.ParseLatinName(marker.FullLatinName)
 		identificationInfo := entities.IdentificationInfo{
-			Family:       latinName.LatinNameString,
-			Genus:        latinName.Genus,
-			Species:      latinName.Species,
-			NameGiver:    config.DefaultNameGiver,
-			Level:        config.Level,
-			ChineseName:  entry.ChineseName,
-			Habit:        entry.Habit,
-			Identifier:   entry.Identifier,
-			IdentifyDate: entry.IdentifyDate,
-			Remarks:      config.Remarks,
+			Family:        latinName.LatinNameString,
+			Genus:         latinName.Genus,
+			Species:       latinName.Species,
+			NamePublisher: config.DefaultNamePublisher,
+			Level:         config.Level,
+			ChineseName:   entry.ChineseName,
+			Habit:         entry.Habit,
+			Identifier:    entry.Identifier,
+			IdentifyDate:  entry.IdentifyDate,
+			Remarks:       config.Remarks,
 		}
 
 		recordingInfo := entities.RecordingInfo{
@@ -65,7 +65,7 @@ func ToResultData(
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
 		if webInfo, ok := webInfoMap[marker.FullLatinName]; ok {
 			collectingInfo.Habitat = webInfo.Habitat
-			identificationInfo.NameGiver = webInfo.NameGiver
+			identificationInfo.NamePublisher = webInfo.NamePublisher
 
 			morphologyInfo.BodyHeight = webInfo.BodyHeight
 			morphologyInfo.DBH = webInfo.DBH
