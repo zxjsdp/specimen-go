@@ -15,7 +15,7 @@ const (
 
 // goroutine
 const (
-	WorkerPoolSize = 10 // worker poll size
+	WorkerPoolSize = 30 // worker poll size
 )
 
 // filtering keywords
