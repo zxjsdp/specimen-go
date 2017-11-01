@@ -93,7 +93,6 @@ func getXlsxFiles() []string {
 
 func RunMainWindow() {
 	mw := &MyMainWindow{}
-	var openAction *walk.Action
 
 	if err := (MainWindow{
 		AssignTo: &mw.MainWindow,
@@ -106,14 +105,9 @@ func RunMainWindow() {
 			Menu{
 				Text: "&File",
 				Items: []MenuItem{
-					Action{
-						AssignTo: &openAction,
-						Text:     "&Open",
-						//OnTriggered: mw.openAction_Triggered,
-					},
 					Separator{},
 					Action{
-						Text:        "Exit",
+						Text:        "退出",
 						OnTriggered: func() { mw.Close() },
 					},
 				},
@@ -122,7 +116,12 @@ func RunMainWindow() {
 				Text: "&Help",
 				Items: []MenuItem{
 					Action{
-						Text:        "About",
+						Text:        "帮助",
+						OnTriggered: mw.helpAction_Triggered,
+					},
+					Separator{},
+					Action{
+						Text:        "关于",
 						OnTriggered: mw.aboutAction_Triggered,
 					},
 				},
@@ -203,7 +202,7 @@ func RunMainWindow() {
 					},
 					HSpacer{},
 					PushButton{
-						Text:     "Start",
+						Text:     "开始处理",
 						AssignTo: &mw.startButton,
 						OnClicked: func() {
 							queryFile := mw.combo1.Text()
@@ -246,9 +245,9 @@ func RunMainWindow() {
 
 func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile string) {
 	mw.startButton.SetEnabled(false)
-	mw.startButton.SetText("Processing...")
+	mw.startButton.SetText("处理中...")
 	defer mw.startButton.SetEnabled(true)
-	defer mw.startButton.SetText("Start")
+	defer mw.startButton.SetText("开始处理")
 
 	log.Printf("开始读取 entry 数据文件 ...\n")
 	mw.progressBar.SetValue(1)
@@ -321,6 +320,10 @@ func (mw *MyMainWindow) openFile() (string, error) {
 	return dlg.FilePath, nil
 }
 
+func (mw *MyMainWindow) helpAction_Triggered() {
+	walk.MsgBox(mw, "帮助", "使用帮助", walk.MsgBoxIconInformation)
+}
+
 func (mw *MyMainWindow) aboutAction_Triggered() {
-	walk.MsgBox(mw, "About", "Specimen GUI", walk.MsgBoxIconInformation)
+	walk.MsgBox(mw, "关于", "Specimen GUI v1.2.0 by zxjsdp", walk.MsgBoxIconInformation)
 }
