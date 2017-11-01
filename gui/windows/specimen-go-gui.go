@@ -145,6 +145,7 @@ func RunMainWindow() {
 						AssignTo: &mw.combo1,
 						Model:    getXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo1,
+						ToolTipText:           "选取或者填写 query 文件名称",
 					},
 					PushButton{
 						Text:     "...",
@@ -163,6 +164,7 @@ func RunMainWindow() {
 						AssignTo: &mw.combo2,
 						Model:    getXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo2,
+						ToolTipText:           "选取或者填写 data 文件名称",
 					},
 					PushButton{
 						Text:     "...",
@@ -181,6 +183,7 @@ func RunMainWindow() {
 						AssignTo: &mw.combo3,
 						Model:    getXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo3,
+						ToolTipText:           "选取或者填写输出文件名称",
 					},
 					PushButton{
 						Text:     "...",
@@ -197,13 +200,15 @@ func RunMainWindow() {
 				Layout: HBox{},
 				Children: []Widget{
 					Label{
-						AssignTo: &mw.statusBar,
-						Text:     "",
+						AssignTo:    &mw.statusBar,
+						Text:        "",
+						ToolTipText: "提示信息",
 					},
 					HSpacer{},
 					PushButton{
-						Text:     "开始处理",
-						AssignTo: &mw.startButton,
+						Text:        "开始处理",
+						AssignTo:    &mw.startButton,
+						ToolTipText: "开始进行植物标本数据处理",
 						OnClicked: func() {
 							queryFile := mw.combo1.Text()
 							dataFile := mw.combo2.Text()
@@ -219,10 +224,11 @@ func RunMainWindow() {
 				},
 			},
 			ProgressBar{
-				AssignTo: &mw.progressBar,
-				MinValue: 0,
-				MaxValue: 100,
-				Font:     Font{PointSize: 6},
+				AssignTo:    &mw.progressBar,
+				MinValue:    0,
+				MaxValue:    100,
+				Font:        Font{PointSize: 6},
+				ToolTipText: "处理进度",
 			},
 		},
 	}.Create()); err != nil {
@@ -236,9 +242,7 @@ func RunMainWindow() {
 		log.Fatal(err)
 	}
 
-	//lv.PostAppendText("111")
 	log.SetOutput(lv)
-	//log.Println("222")
 
 	mw.Run()
 }
