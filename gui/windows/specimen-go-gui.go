@@ -26,7 +26,7 @@ const (
 	Title    = "植物标本录入软件"
 	Width    = 800
 	Height   = 700
-	IconPath = "icon.ico"
+	IconPath = "../resources/icon.ico"
 )
 
 type MyMainWindow struct {
