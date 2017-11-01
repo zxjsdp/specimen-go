@@ -8,12 +8,8 @@ import (
 	"strings"
 
 	"github.com/zxjsdp/specimen-go/config"
-	"github.com/zxjsdp/specimen-go/converters"
-	"github.com/zxjsdp/specimen-go/entities"
-	"github.com/zxjsdp/specimen-go/files"
-	"github.com/zxjsdp/specimen-go/utils"
-	"github.com/zxjsdp/specimen-go/web"
 	"github.com/zxjsdp/specimen-go/specimen"
+	"github.com/zxjsdp/specimen-go/utils"
 )
 
 // 解析命令行，并输出 query 文件名、data 文件名、output 文件名
