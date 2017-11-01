@@ -18,6 +18,7 @@ import (
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 	"github.com/zxjsdp/specimen-go/files"
+	"github.com/zxjsdp/specimen-go/utils"
 	"github.com/zxjsdp/specimen-go/web"
 )
 
@@ -229,6 +230,8 @@ func RunMainWindow() {
 		log.Fatal(err)
 	}
 
+	log.SetFlags(0)
+	log.SetOutput(new(utils.LogWriter))
 	lv, err := NewLogView(mw)
 	if err != nil {
 		log.Fatal(err)

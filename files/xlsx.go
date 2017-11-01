@@ -67,6 +67,6 @@ func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) 
 	if err != nil {
 		log.Println(err)
 	} else {
-		log.Printf("    已将结果写入文件：%s\n", xlsxFileName)
+		log.Printf("已将结果写入文件：%s\n", xlsxFileName)
 	}
 }
