@@ -37,7 +37,7 @@ func GetDataMatrix(xlsxFileName string) entities.DataMatrix {
 		matrix = append(matrix, cellsPerRow)
 	}
 
-	return entities.DataMatrix{Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}
+	return entities.DataMatrix{FileName: xlsxFileName, Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}
 }
 
 func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) {

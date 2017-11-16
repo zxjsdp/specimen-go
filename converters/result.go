@@ -41,7 +41,7 @@ func ToResultData(
 			Remarks2:         config.Remarks2,
 		}
 
-		latinName := utils.ParseLatinName(marker.FullLatinName)
+		latinName := utils.ParseLatinName(entry.FullLatinName)
 		identificationInfo := entities.IdentificationInfo{
 			Family:        latinName.LatinNameString,
 			Genus:         latinName.Genus,
@@ -63,7 +63,7 @@ func ToResultData(
 		morphologyInfo := entities.Morphology{}
 
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
-		if webInfo, ok := webInfoMap[marker.FullLatinName]; ok {
+		if webInfo, ok := webInfoMap[entry.FullLatinName]; ok {
 			collectingInfo.Habitat = webInfo.Habitat
 			identificationInfo.NamePublisher = webInfo.NamePublisher
 

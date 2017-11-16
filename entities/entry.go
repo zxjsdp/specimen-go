@@ -5,28 +5,31 @@ import (
 	"reflect"
 )
 
-//// 个体录入信息
-//type EntryData struct {
-//	SpeciesNumber     string // 物种编号
-//	FullLatinName     string // 种名（拉丁名）
-//	ChineseName       string // 中文名
-//	FamilyChineseName string // 科名（中文）
-//	FamilyLatinName   string // 科名（拉丁名）
-//	Province          string // 省
-//	City              string // 市
-//	DetailedPlace     string // 具体小地名
-//	Latitude          string // 纬度
-//	Longitude         string // 经度
-//	Altitude          string // 海拔
-//	CollectingDate    string // 采集日期
-//	Inventory         string // 库存
-//	Habit         string // 草灌
-//	Collector         string // 采集人
-//	Identifier        string // 鉴定人
-//	IdentifyDate      string // 鉴定日期
-//	RecordingPerson          string // 录入人
-//	RecordingDate     string // 录入日期
-//}
+var EntryCellMap = [][]string{
+	{"SpeciesNumber", "物种编号"},
+	{"ChineseName", "中文名"},
+	{"FullLatinName", "种名（拉丁名）"},
+	{"FamilyChineseName", "科名（中文）"},
+	{"FamilyLatinName", "科名（拉丁名）"},
+	{"Province", "省"},
+	{"City", "市"},
+	{"DetailedPlace", "具体小地名"},
+	{"Latitude", "纬度"},
+	{"Longitude", "经度"},
+	{"Altitude", "海拔"},
+	{"CollectingDate", "采集日期"},
+	{"Inventory", "库存"},
+	{"Habit", "习性（草灌）"},
+	{"Collector", "采集人"},
+	{"Identifier", "鉴定人"},
+	{"IdentifyDate", "鉴定日期"},
+	{"RecordingPerson", "录入人"},
+	{"RecordingDate", "录入日期"},
+}
+
+const (
+	EntryDataColumnLength = 19 // Entry 文件的列数目
+)
 
 // Entry 数据
 type EntryData struct {
