@@ -11,6 +11,9 @@ import (
 )
 
 func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesMarkerFileHasHeader bool) {
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 文件读取及解析
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始读取 entry 数据文件 ...（进度 %%1）\n")
 	entryDataMatrix := files.GetDataMatrix(entryDataFile)
 	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
@@ -22,6 +25,9 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
 	log.Printf("读取 marker 数据结束！（进度 %%19）\n")
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 数据校验
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	validationResult := utils.DataValidation(entryDataMatrix, markerDataMatrix)
 	if !validationResult.Result {
 		for i, failureInfo := range validationResult.FailureInfo {
@@ -39,11 +45,17 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 		}
 	}
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 从网络获取信息
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始提取网络信息 ...（进度 %%20）\n")
 	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
 	webInfoMap := web.GenerateWebInfoMap(speciesNames)
 	log.Printf("提取网络信息结束！（进度 %%90）\n")
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 整合数据信息及网络信息并生成结果
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始整合本地数据及网络信息 ...（进度 %%91）\n")
 	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
 	if doesMarkerFileHasHeader {
@@ -55,6 +67,9 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 	}
 	log.Printf("整合本地数据及网络信息结束！（进度 %%94）\n")
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 将结果写入输出文件
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始将结果信息写入 xlsx 输出文件...（进度 %%95）\n")
 	files.SaveDataMatrix(outputDataFile, resultDataSlice)
 

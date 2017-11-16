@@ -27,6 +27,8 @@ const (
 	Width    = 800
 	Height   = 700
 	IconPath = "../resources/icon.ico"
+
+	Separater = "========================================================="
 )
 
 type MyMainWindow struct {
@@ -214,11 +216,20 @@ func RunMainWindow() {
 							dataFile := mw.combo2.Text()
 							outputFile := mw.combo3.Text()
 
-							if len(queryFile) == 0 || len(dataFile) == 0 || len(outputFile) == 0 {
-								mw.statusBar.SetText("参数无效！")
+							if len(queryFile) == 0 || len(strings.TrimSpace(queryFile)) == 0 {
+								mw.statusBar.SetText("文件名不能为空：query 文件")
 								return
 							}
-							go mw.RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile)
+							if len(dataFile) == 0 || len(strings.TrimSpace(dataFile)) == 0 {
+								mw.statusBar.SetText("文件名不能为空：data 文件")
+								return
+							}
+							if len(outputFile) == 0 || len(strings.TrimSpace(outputFile)) == 0 {
+								mw.statusBar.SetText("文件名不能为空：output 文件")
+								return
+							}
+
+							go mw.RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile, true)
 						},
 					},
 				},
@@ -247,12 +258,17 @@ func RunMainWindow() {
 	mw.Run()
 }
 
-func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile string) {
+func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile string, doesMarkerFileHasHeader bool) {
 	mw.startButton.SetEnabled(false)
 	mw.startButton.SetText("处理中...")
 	defer mw.startButton.SetEnabled(true)
 	defer mw.startButton.SetText("开始处理")
 
+	log.Printf("%s\n", Separater)
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 文件读取及解析
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始读取 entry 数据文件 ...\n")
 	mw.progressBar.SetValue(1)
 	entryDataMatrix := files.GetDataMatrix(dataFile)
@@ -268,6 +284,30 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	log.Printf("读取 marker 数据结束！\n")
 	mw.progressBar.SetValue(30)
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 数据校验
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	validationResult := utils.DataValidation(entryDataMatrix, markerDataMatrix)
+	if !validationResult.Result {
+		for i, failureInfo := range validationResult.FailureInfo {
+			log.Printf("错误（%d）%s\n", i+1, failureInfo)
+		}
+		for i, warningInfo := range validationResult.WarningInfo {
+			log.Printf("警告（%d）%s\n", i+1, warningInfo)
+		}
+
+		log.Printf("请解决上述错误后再重新运行。程序即将退出！\n")
+		mw.progressBar.SetValue(0)
+		return
+	} else {
+		for i, warningInfo := range validationResult.WarningInfo {
+			log.Printf("警告（%d）%s\n", i+1, warningInfo)
+		}
+	}
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 从网络获取信息
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始提取网络信息，这可能会花费一些时间，请耐心等待 ...\n")
 	mw.progressBar.SetValue(40)
 	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
@@ -275,9 +315,15 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	log.Printf("提取网络信息结束！\n")
 	mw.progressBar.SetValue(60)
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 整合数据信息及网络信息并生成结果
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始整合本地数据及网络信息 ...\n")
 	mw.progressBar.SetValue(70)
 	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
+	if doesMarkerFileHasHeader {
+		markerDataSlice = markerDataSlice[1:] // 去除 marker 文件中的标题行
+	}
 	for i, marker := range markerDataSlice {
 		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
 		resultDataSlice[i] = resultData
@@ -285,6 +331,9 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	log.Printf("整合本地数据及网络信息结束！\n")
 	mw.progressBar.SetValue(80)
 
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 将结果写入输出文件
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始将结果信息写入 xlsx 输出文件...\n")
 	mw.progressBar.SetValue(90)
 	files.SaveDataMatrix(outputFile, resultDataSlice)
