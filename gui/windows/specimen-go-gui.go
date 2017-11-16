@@ -379,6 +379,6 @@ func (mw *MyMainWindow) helpAction_Triggered() {
 }
 
 func (mw *MyMainWindow) aboutAction_Triggered() {
-	about := fmt.Sprintf("%s\nSpecimen GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
+	about := fmt.Sprintf("%s\nspecimen-go GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
 	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
 }
