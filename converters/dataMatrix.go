@@ -27,11 +27,11 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 	return dataMatrix
 }
 
-// DataMatrix 转换至 MarkerData slice
-func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
-	markerDataSlice := make([]entities.MarkerData, 0)
+// DataMatrix 转换至 SnData slice
+func ToSnDataSlice(d entities.DataMatrix) []entities.SnData {
+	snDataSlice := make([]entities.SnData, 0)
 	for _, cells := range d.Matrix {
-		markerDataSlice = append(markerDataSlice, entities.MarkerData{
+		snDataSlice = append(snDataSlice, entities.SnData{
 			SpeciesNumber: cells[0],
 			SerialNumber:  cells[1],
 			Barcode:       cells[2],
@@ -39,12 +39,12 @@ func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 		})
 	}
 
-	return markerDataSlice
+	return snDataSlice
 }
 
-// DataMatrix 转换至 EntityData slice
-func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
-	entryDataSlice := make([]entities.EntryData, 0)
+// DataMatrix 转换至 OfflineData slice
+func ToOfflineDataSlice(d entities.DataMatrix) []entities.OfflineData {
+	offlineDataSlice := make([]entities.OfflineData, 0)
 	for _, cells := range d.Matrix {
 		speciesNumber := cells[0]
 		chineseName := cells[1]
@@ -66,8 +66,8 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 		recordingPerson := cells[17]
 		recordingDate := cells[18]
 
-		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{SpeciesNumber: speciesNumber, Inventory: inventory}
-		entryCollectingInfo := entities.EntryCollectingInfo{
+		offlineSpecimenMetaInfo := entities.OfflineSpecimenMetaInfo{SpeciesNumber: speciesNumber, Inventory: inventory}
+		offlineCollectingInfo := entities.OfflineCollectingInfo{
 			Province:       province,
 			City:           city,
 			DetailedPlace:  detailedPlace,
@@ -77,7 +77,7 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 			CollectingDate: collectingDate,
 			Collector:      collector,
 		}
-		entryIdentificationInfo := entities.EntryIdentificationInfo{
+		offlineIdentificationInfo := entities.OfflineIdentificationInfo{
 			Identifier:        identifier,
 			IdentifyDate:      identifyDate,
 			FullLatinName:     fullLatinName,
@@ -87,20 +87,20 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 			Habit:             habit,
 		}
 
-		entryRecordingInfo := entities.EntryRecordingInfo{
+		offlineRecordingInfo := entities.OfflineRecordingInfo{
 			RecordingPerson: recordingPerson,
 			RecordingDate:   recordingDate,
 		}
 
-		entryData := entities.EntryData{
-			EntrySpecimenMetaInfo:   entrySpecimenMetaInfo,
-			EntryCollectingInfo:     entryCollectingInfo,
-			EntryIdentificationInfo: entryIdentificationInfo,
-			EntryRecordingInfo:      entryRecordingInfo,
+		offlineData := entities.OfflineData{
+			OfflineSpecimenMetaInfo:   offlineSpecimenMetaInfo,
+			OfflineCollectingInfo:     offlineCollectingInfo,
+			OfflineIdentificationInfo: offlineIdentificationInfo,
+			OfflineRecordingInfo:      offlineRecordingInfo,
 		}
 
-		entryDataSlice = append(entryDataSlice, entryData)
+		offlineDataSlice = append(offlineDataSlice, offlineData)
 	}
 
-	return entryDataSlice
+	return offlineDataSlice
 }

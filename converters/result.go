@@ -10,60 +10,60 @@ import (
 )
 
 func ToResultData(
-	marker entities.MarkerData,
-	entryDataMap map[string]entities.EntryData,
+	snData entities.SnData,
+	offlineDataMap map[string]entities.OfflineData,
 	webInfoMap map[string]entities.WebInfo) entities.ResultData {
 
 	var resultData entities.ResultData
-	if entry, ok := entryDataMap[marker.SpeciesNumber]; ok {
+	if offlineData, ok := offlineDataMap[snData.SpeciesNumber]; ok {
 		specimenMetaInfo := entities.SpecimenMetaInfo{
 			LibraryCode:       config.LibraryCode,
-			SerialNumber:      marker.SerialNumber,
-			Barcode:           marker.Barcode,
+			SerialNumber:      snData.SerialNumber,
+			Barcode:           snData.Barcode,
 			PatternType:       config.PatternType,
 			SpecimenCondition: config.SpecimenCondition,
 			Inventory:         config.Inventory,
 		}
 
 		collectingInfo := entities.CollectingInfo{
-			Collector:        entry.Collector,
-			CollectingNumber: entry.SpeciesNumber + "-" + marker.CopyNumber,
-			CollectingDate:   entry.CollectingDate,
+			Collector:        offlineData.Collector,
+			CollectingNumber: offlineData.SpeciesNumber + "-" + snData.CopyNumber,
+			CollectingDate:   offlineData.CollectingDate,
 			Country:          config.Country,
-			ProvinceAndCity:  entry.Province + "，" + entry.City,
+			ProvinceAndCity:  offlineData.Province + "，" + offlineData.City,
 			District:         config.District,
-			Altitude:         entry.Altitude,
+			Altitude:         offlineData.Altitude,
 			NegativeAltitude: config.NegativeAltitude,
-			DetailedPlace:    entry.DetailedPlace,
+			DetailedPlace:    offlineData.DetailedPlace,
 			Habitat:          config.DefaultHabitat,
-			Longitude:        entry.Longitude,
-			Latitude:         entry.Latitude,
+			Longitude:        offlineData.Longitude,
+			Latitude:         offlineData.Latitude,
 			Remarks2:         config.Remarks2,
 		}
 
-		latinName := utils.ParseLatinName(entry.FullLatinName)
+		latinName := utils.ParseLatinName(offlineData.FullLatinName)
 		identificationInfo := entities.IdentificationInfo{
 			Family:        latinName.LatinNameString,
 			Genus:         latinName.Genus,
 			Species:       latinName.Species,
 			NamePublisher: config.DefaultNamePublisher,
 			Level:         config.Level,
-			ChineseName:   entry.ChineseName,
-			Habit:         entry.Habit,
-			Identifier:    entry.Identifier,
-			IdentifyDate:  entry.IdentifyDate,
+			ChineseName:   offlineData.ChineseName,
+			Habit:         offlineData.Habit,
+			Identifier:    offlineData.Identifier,
+			IdentifyDate:  offlineData.IdentifyDate,
 			Remarks:       config.Remarks,
 		}
 
 		recordingInfo := entities.RecordingInfo{
-			RecordingPerson: entry.RecordingPerson,
-			RecordingDate:   entry.RecordingDate,
+			RecordingPerson: offlineData.RecordingPerson,
+			RecordingDate:   offlineData.RecordingDate,
 		}
 
 		morphologyInfo := entities.Morphology{}
 
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
-		if webInfo, ok := webInfoMap[entry.FullLatinName]; ok {
+		if webInfo, ok := webInfoMap[offlineData.FullLatinName]; ok {
 			collectingInfo.Habitat = webInfo.Habitat
 			identificationInfo.NamePublisher = webInfo.NamePublisher
 
@@ -84,7 +84,7 @@ func ToResultData(
 			Morphology:         morphologyInfo,
 		}
 	} else {
-		log.Fatal(fmt.Sprintf("Entry 文件中缺失物种编号：%s", marker.SerialNumber))
+		log.Fatal(fmt.Sprintf("“鉴定及录入文件” 中缺失物种编号：%s", snData.SerialNumber))
 	}
 	return resultData
 }

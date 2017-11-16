@@ -5,26 +5,26 @@ import (
 	"github.com/zxjsdp/specimen-go/utils"
 )
 
-// 生成 Entry info map
-func GenerateEntryDataMap(entryDataSlice []entities.EntryData) map[string]entities.EntryData {
-	entryDataMap := make(map[string]entities.EntryData)
-	if len(entryDataSlice) == 0 {
-		return entryDataMap
+// 生成 Offline info map
+func GenerateOfflineDataMap(offlineDataSlice []entities.OfflineData) map[string]entities.OfflineData {
+	offlineDataMap := make(map[string]entities.OfflineData)
+	if len(offlineDataSlice) == 0 {
+		return offlineDataMap
 	}
 
-	for _, entry := range entryDataSlice {
-		entryDataMap[entry.SpeciesNumber] = entry
+	for _, offlineData := range offlineDataSlice {
+		offlineDataMap[offlineData.SpeciesNumber] = offlineData
 	}
 
-	return entryDataMap
+	return offlineDataMap
 }
 
-// 从 entryData 中提取 species slice
-func ExtractSpeciesNames(entryDataSlice []entities.EntryData) []string {
-	speciesNames := make([]string, len(entryDataSlice))
+// 从 offlineData 中提取 species slice
+func ExtractSpeciesNames(offlineDataSlice []entities.OfflineData) []string {
+	speciesNames := make([]string, len(offlineDataSlice))
 	index := 0
-	for _, entryData := range entryDataSlice {
-		speciesNames[index] = entryData.FullLatinName
+	for _, offlineData := range offlineDataSlice {
+		speciesNames[index] = offlineData.FullLatinName
 		index++
 	}
 	return utils.RemoveDuplicates(speciesNames[:index])

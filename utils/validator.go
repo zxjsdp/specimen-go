@@ -13,40 +13,40 @@ type ValidationResult struct {
 	WarningInfo []string
 }
 
-func DataValidation(entryDataMatrix, markerDataMatrix entities.DataMatrix) (validationResult ValidationResult) {
+func DataValidation(offlineDataMatrix, snDataMatrix entities.DataMatrix) (validationResult ValidationResult) {
 	allPass := true
 	allFailureInfo := make([]string, 0)
 	allWarningInfo := make([]string, 0)
 
-	if entryDataMatrix.RowCount <= 1 {
+	if offlineDataMatrix.RowCount <= 1 {
 		allPass = false
-		allFailureInfo = append(allFailureInfo, "Entry 文件内容为空")
+		allFailureInfo = append(allFailureInfo, "“鉴定录入文件” 内容为空！")
 	}
 
-	if markerDataMatrix.RowCount <= 1 {
+	if snDataMatrix.RowCount <= 1 {
 		allPass = false
-		allFailureInfo = append(allFailureInfo, "Marker 文件内容为空")
+		allFailureInfo = append(allFailureInfo, "“流水号文件” 内容为空！")
 	}
 
-	entryDataValidationResult := checkCellValueExistenceAndDuplication(entities.EntryCellMap, entryDataMatrix, "SpeciesNumber", false, false)
-	if !entryDataValidationResult.Result {
+	offlineDataValidationResult := checkCellValueExistenceAndDuplication(entities.OfflineDataCellMap, offlineDataMatrix, "SpeciesNumber", false, false)
+	if !offlineDataValidationResult.Result {
 		allPass = false
 	}
-	for _, failureInfo := range entryDataValidationResult.FailureInfo {
+	for _, failureInfo := range offlineDataValidationResult.FailureInfo {
 		allFailureInfo = append(allFailureInfo, failureInfo)
 	}
-	for _, warningInfo := range entryDataValidationResult.WarningInfo {
+	for _, warningInfo := range offlineDataValidationResult.WarningInfo {
 		allWarningInfo = append(allWarningInfo, warningInfo)
 	}
 
-	markerDataValidationResult := checkCellValueExistenceAndDuplication(entities.MarkerCellMap, markerDataMatrix, "SpeciesNumber", false, true)
-	if !markerDataValidationResult.Result {
+	snDataValidationResult := checkCellValueExistenceAndDuplication(entities.SnDataCellMap, snDataMatrix, "SpeciesNumber", false, true)
+	if !snDataValidationResult.Result {
 		allPass = false
 	}
-	for _, failureInfo := range markerDataValidationResult.FailureInfo {
+	for _, failureInfo := range snDataValidationResult.FailureInfo {
 		allFailureInfo = append(allFailureInfo, failureInfo)
 	}
-	for _, warningInfo := range markerDataValidationResult.WarningInfo {
+	for _, warningInfo := range snDataValidationResult.WarningInfo {
 		allWarningInfo = append(allWarningInfo, warningInfo)
 	}
 
