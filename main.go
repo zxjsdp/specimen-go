@@ -12,24 +12,24 @@ import (
 	"github.com/zxjsdp/specimen-go/utils"
 )
 
-// 解析命令行，并输出 query 文件名、data 文件名、output 文件名
+// 解析命令行，并输出 流水号文件名、物种记录及鉴定文件名、输出文件名
 func parseArgument() (string, string, string) {
-	markerDataPtr := flag.String("query", "", "物种编号文件（query.xlsx）")
-	offlineDataPtr := flag.String("data", "", "物种记录及鉴定文件（data.xlsx）")
-	outputDataPtr := flag.String("output", "", "输出文件（xlsx 格式）")
+	snDataPtr := flag.String("s", "", "流水号文件.xlsx")
+	offlineDataPtr := flag.String("d", "", "物种记录及鉴定文件.xlsx")
+	outputDataPtr := flag.String("o", "", "输出文件.xlsx")
 
 	flag.Parse()
 
-	utils.CheckFileExists(*markerDataPtr, "-query", config.USAGE)
-	utils.CheckFileExists(*offlineDataPtr, "-data", config.USAGE)
+	utils.CheckFileExists(*snDataPtr, "-s", config.USAGE)
+	utils.CheckFileExists(*offlineDataPtr, "-d", config.USAGE)
 	if len(strings.TrimSpace(*outputDataPtr)) == 0 {
-		log.Fatal(fmt.Sprintf("ERROR! Blank argument for [ -output ].%s", config.USAGE))
+		log.Fatal(fmt.Sprintf("ERROR! 参数不能为空：[ -o ]. %s", config.USAGE))
 	}
 
-	return *markerDataPtr, *offlineDataPtr, *outputDataPtr
+	return *snDataPtr, *offlineDataPtr, *outputDataPtr
 }
 
 func main() {
-	markerDataFile, offlineDataFile, outputDataFile := parseArgument()
-	specimen.RunSpecimenInfo(markerDataFile, offlineDataFile, outputDataFile, true)
+	snDataFile, offlineDataFile, outputDataFile := parseArgument()
+	specimen.RunSpecimenInfo(snDataFile, offlineDataFile, outputDataFile, true)
 }

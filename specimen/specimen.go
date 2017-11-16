@@ -10,25 +10,25 @@ import (
 	"github.com/zxjsdp/specimen-go/web"
 )
 
-func RunSpecimenInfo(markerDataFile, offlineDataFile, outputDataFile string, doesMarkerFileHasHeader bool) {
+func RunSpecimenInfo(snDataFile, offlineDataFile, outputDataFile string, doesSnFileHasHeader bool) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 文件读取及解析
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	log.Printf("开始读取 offline 数据文件 ...（进度 %%1）\n")
+	log.Printf("开始读取 “鉴定录入文件” 数据 ...（进度 %%1）\n")
 	offlineDataMatrix := files.GetDataMatrix(offlineDataFile)
 	offlineDataSlice := converters.ToOfflineDataSlice(offlineDataMatrix)
 	offlineDataMap := converters.GenerateOfflineDataMap(offlineDataSlice)
-	log.Printf("读取 offline 数据结束！（进度 %%9）\n")
+	log.Printf("读取 “鉴定录入文件” 数据结束！（进度 %%9）\n")
 
-	log.Printf("开始读取 marker 数据文件 ...（进度 %%10）\n")
-	markerDataMatrix := files.GetDataMatrix(markerDataFile)
-	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
-	log.Printf("读取 marker 数据结束！（进度 %%19）\n")
+	log.Printf("开始读取 “流水号文件” 数据 ...（进度 %%10）\n")
+	snDataMatrix := files.GetDataMatrix(snDataFile)
+	snDataSlice := converters.ToSnDataSlice(snDataMatrix)
+	log.Printf("读取 “流水号文件” 数据结束！（进度 %%19）\n")
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 数据校验
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	validationResult := utils.DataValidation(offlineDataMatrix, markerDataMatrix)
+	validationResult := utils.DataValidation(offlineDataMatrix, snDataMatrix)
 	if !validationResult.Result {
 		for i, failureInfo := range validationResult.FailureInfo {
 			log.Printf("错误（%d）%s\n", i+1, failureInfo)
@@ -57,12 +57,12 @@ func RunSpecimenInfo(markerDataFile, offlineDataFile, outputDataFile string, doe
 	// 整合数据信息及网络信息并生成结果
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始整合本地数据及网络信息 ...（进度 %%91）\n")
-	resultDataSlice := make([]entities.ResultData, len(markerDataSlice))
-	if doesMarkerFileHasHeader {
-		markerDataSlice = markerDataSlice[1:] // 去除 marker 文件中的标题行
+	resultDataSlice := make([]entities.ResultData, len(snDataSlice))
+	if doesSnFileHasHeader {
+		snDataSlice = snDataSlice[1:] // 去除 “流水号文件” 中的标题行
 	}
-	for i, marker := range markerDataSlice {
-		resultData := converters.ToResultData(marker, offlineDataMap, webInfoMap)
+	for i, snData := range snDataSlice {
+		resultData := converters.ToResultData(snData, offlineDataMap, webInfoMap)
 		resultDataSlice[i] = resultData
 	}
 	log.Printf("整合本地数据及网络信息结束！（进度 %%94）\n")

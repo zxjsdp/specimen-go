@@ -1,10 +1,6 @@
 package entities
 
-const (
-	MarkerDataColumnLength = 5 // Marker 文件的列数目
-)
-
-var MarkerCellMap = [][]string{
+var SnDataCellMap = [][]string{
 	{"SpeciesNumber", "物种编号"},
 	{"SerialNumber", "流水号"},
 	{"Barcode", "条形码"},
@@ -12,7 +8,7 @@ var MarkerCellMap = [][]string{
 }
 
 // 物种信息
-type MarkerData struct {
+type SnData struct {
 	SpeciesNumber string // 物种编号
 	SerialNumber  string // 流水号
 	Barcode       string // 条形码

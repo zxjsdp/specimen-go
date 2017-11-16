@@ -27,11 +27,11 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 	return dataMatrix
 }
 
-// DataMatrix 转换至 MarkerData slice
-func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
-	markerDataSlice := make([]entities.MarkerData, 0)
+// DataMatrix 转换至 SnData slice
+func ToSnDataSlice(d entities.DataMatrix) []entities.SnData {
+	snDataSlice := make([]entities.SnData, 0)
 	for _, cells := range d.Matrix {
-		markerDataSlice = append(markerDataSlice, entities.MarkerData{
+		snDataSlice = append(snDataSlice, entities.SnData{
 			SpeciesNumber: cells[0],
 			SerialNumber:  cells[1],
 			Barcode:       cells[2],
@@ -39,7 +39,7 @@ func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 		})
 	}
 
-	return markerDataSlice
+	return snDataSlice
 }
 
 // DataMatrix 转换至 OfflineData slice

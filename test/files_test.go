@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	testMarkerXlsxFile  = "../data/query.xlsx"
+	testSnXlsxFile      = "../data/query.xlsx"
 	testOfflineXlsxFile = "../data/data.xlsx"
 )
 
 func TestGetDataMatrix(t *testing.T) {
-	dataMatrix := files.GetDataMatrix(testMarkerXlsxFile)
+	dataMatrix := files.GetDataMatrix(testSnXlsxFile)
 	if dataMatrix.ColumnCount == 0 || dataMatrix.RowCount == 0 ||
 		len(dataMatrix.Matrix) == 0 || len(dataMatrix.Matrix[0]) == 0 {
 		t.Error("files.GetDataMatrix: failed to read xlsx file!")
@@ -32,12 +32,12 @@ func TestToOfflineDataSlice(t *testing.T) {
 	}
 }
 
-func TestToMarkerDataSlice(t *testing.T) {
-	markerDataMatrix := files.GetDataMatrix(testMarkerXlsxFile)
-	markerDataSlice := converters.ToMarkerDataSlice(markerDataMatrix)
-	if len(markerDataMatrix.Matrix) != len(markerDataSlice) ||
-		len(markerDataMatrix.Matrix[0]) != utils.GetNumberOfField(markerDataSlice[0]) {
-		t.Error("converters.ToMarkerDatas: failed to convert DataMatrix to MarkerDataSlice")
-		log.Println(len(markerDataMatrix.Matrix[0]), utils.GetNumberOfField(markerDataSlice[0]))
+func TestToSnDataSlice(t *testing.T) {
+	snDataMatrix := files.GetDataMatrix(testSnXlsxFile)
+	snDataSlice := converters.ToSnDataSlice(snDataMatrix)
+	if len(snDataMatrix.Matrix) != len(snDataSlice) ||
+		len(snDataMatrix.Matrix[0]) != utils.GetNumberOfField(snDataSlice[0]) {
+		t.Error("converters.ToSnDataSlice: failed to convert DataMatrix to SnDataSlice")
+		log.Println(len(snDataMatrix.Matrix[0]), utils.GetNumberOfField(snDataSlice[0]))
 	}
 }

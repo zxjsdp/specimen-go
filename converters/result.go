@@ -10,16 +10,16 @@ import (
 )
 
 func ToResultData(
-	marker entities.MarkerData,
+	snData entities.SnData,
 	offlineDataMap map[string]entities.OfflineData,
 	webInfoMap map[string]entities.WebInfo) entities.ResultData {
 
 	var resultData entities.ResultData
-	if offlineData, ok := offlineDataMap[marker.SpeciesNumber]; ok {
+	if offlineData, ok := offlineDataMap[snData.SpeciesNumber]; ok {
 		specimenMetaInfo := entities.SpecimenMetaInfo{
 			LibraryCode:       config.LibraryCode,
-			SerialNumber:      marker.SerialNumber,
-			Barcode:           marker.Barcode,
+			SerialNumber:      snData.SerialNumber,
+			Barcode:           snData.Barcode,
 			PatternType:       config.PatternType,
 			SpecimenCondition: config.SpecimenCondition,
 			Inventory:         config.Inventory,
@@ -27,7 +27,7 @@ func ToResultData(
 
 		collectingInfo := entities.CollectingInfo{
 			Collector:        offlineData.Collector,
-			CollectingNumber: offlineData.SpeciesNumber + "-" + marker.CopyNumber,
+			CollectingNumber: offlineData.SpeciesNumber + "-" + snData.CopyNumber,
 			CollectingDate:   offlineData.CollectingDate,
 			Country:          config.Country,
 			ProvinceAndCity:  offlineData.Province + "，" + offlineData.City,
@@ -84,7 +84,7 @@ func ToResultData(
 			Morphology:         morphologyInfo,
 		}
 	} else {
-		log.Fatal(fmt.Sprintf("“鉴定及录入文件” 中缺失物种编号：%s", marker.SerialNumber))
+		log.Fatal(fmt.Sprintf("“鉴定及录入文件” 中缺失物种编号：%s", snData.SerialNumber))
 	}
 	return resultData
 }
