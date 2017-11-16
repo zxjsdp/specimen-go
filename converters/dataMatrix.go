@@ -35,8 +35,7 @@ func ToMarkerDataSlice(d entities.DataMatrix) []entities.MarkerData {
 			SpeciesNumber: cells[0],
 			SerialNumber:  cells[1],
 			Barcode:       cells[2],
-			FullLatinName: cells[3],
-			CopyNumber:    cells[4],
+			CopyNumber:    cells[3],
 		})
 	}
 
