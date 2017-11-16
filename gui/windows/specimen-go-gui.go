@@ -15,6 +15,7 @@ import (
 
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
+	"github.com/zxjsdp/specimen-go/config"
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 	"github.com/zxjsdp/specimen-go/files"
@@ -378,5 +379,6 @@ func (mw *MyMainWindow) helpAction_Triggered() {
 }
 
 func (mw *MyMainWindow) aboutAction_Triggered() {
-	walk.MsgBox(mw, "关于", "Specimen GUI v1.2.0 by zxjsdp", walk.MsgBoxIconInformation)
+	about := fmt.Sprintf("%s\nSpecimen GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
+	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
 }
