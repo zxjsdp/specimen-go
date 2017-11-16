@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	testMarkerXlsxFile = "../data/query.xlsx"
-	testEntryXlsxFile  = "../data/data.xlsx"
+	testMarkerXlsxFile  = "../data/query.xlsx"
+	testOfflineXlsxFile = "../data/data.xlsx"
 )
 
 func TestGetDataMatrix(t *testing.T) {
@@ -22,13 +22,13 @@ func TestGetDataMatrix(t *testing.T) {
 	}
 }
 
-func TestToEntryDataSlice(t *testing.T) {
-	entryDataMatrix := files.GetDataMatrix(testEntryXlsxFile)
-	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
-	if len(entryDataMatrix.Matrix) != len(entryDataSlice) ||
-		len(entryDataMatrix.Matrix[0]) != 20 ||
-		utils.GetNumberOfField(entryDataSlice[0]) != 4 {
-		t.Error("converters.ToEntryDataSlice: failed to convert DataMatrix to EntryDataSlice")
+func TestToOfflineDataSlice(t *testing.T) {
+	offlineDataMatrix := files.GetDataMatrix(testOfflineXlsxFile)
+	offlineDataSlice := converters.ToOfflineDataSlice(offlineDataMatrix)
+	if len(offlineDataMatrix.Matrix) != len(offlineDataSlice) ||
+		len(offlineDataMatrix.Matrix[0]) != 20 ||
+		utils.GetNumberOfField(offlineDataSlice[0]) != 4 {
+		t.Error("converters.ToOfflineDataSlice: failed to convert DataMatrix to OfflineDataSlice")
 	}
 }
 

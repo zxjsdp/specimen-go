@@ -5,7 +5,8 @@ import (
 	"reflect"
 )
 
-var EntryCellMap = [][]string{
+// 标本鉴定数据 map
+var OfflineDataCellMap = [][]string{
 	{"SpeciesNumber", "物种编号"},
 	{"ChineseName", "中文名"},
 	{"FullLatinName", "种名（拉丁名）"},
@@ -27,19 +28,15 @@ var EntryCellMap = [][]string{
 	{"RecordingDate", "录入日期"},
 }
 
-const (
-	EntryDataColumnLength = 19 // Entry 文件的列数目
-)
-
-// Entry 数据
-type EntryData struct {
-	EntrySpecimenMetaInfo   // Entry 标本基础信息
-	EntryCollectingInfo     // Entry 采集信息
-	EntryIdentificationInfo // Entry 鉴定信息
-	EntryRecordingInfo      // Entry 录入信息
+// 标本鉴定数据
+type OfflineData struct {
+	OfflineSpecimenMetaInfo   // Offline 标本基础信息
+	OfflineCollectingInfo     // Offline 标本采集信息
+	OfflineIdentificationInfo // Offline 标本鉴定信息
+	OfflineRecordingInfo      // Offline 标本录入信息
 }
 
-func (e EntryData) String() string {
+func (e OfflineData) String() string {
 	output := ""
 	v := reflect.ValueOf(e)
 	for i := 0; i < v.NumField(); i++ {
@@ -48,14 +45,14 @@ func (e EntryData) String() string {
 	return output
 }
 
-// Entry 标本基础信息
-type EntrySpecimenMetaInfo struct {
+// Offline 标本基础信息
+type OfflineSpecimenMetaInfo struct {
 	SpeciesNumber string // 物种编号
 	Inventory     string // 库存
 }
 
-// Entry 采集信息
-type EntryCollectingInfo struct {
+// Offline 采集信息
+type OfflineCollectingInfo struct {
 	Province       string // 省
 	City           string // 市
 	DetailedPlace  string // 具体小地名
@@ -66,8 +63,8 @@ type EntryCollectingInfo struct {
 	Collector      string // 采集人
 }
 
-// Entry 鉴定信息
-type EntryIdentificationInfo struct {
+// Offline 鉴定信息
+type OfflineIdentificationInfo struct {
 	Identifier        string // 鉴定人
 	IdentifyDate      string // 鉴定日期
 	FullLatinName     string // 种名（拉丁名）
@@ -77,8 +74,8 @@ type EntryIdentificationInfo struct {
 	Habit             string // 习性（草灌）
 }
 
-// Entry 录入信息
-type EntryRecordingInfo struct {
+// Offline 录入信息
+type OfflineRecordingInfo struct {
 	RecordingPerson string // 录入人
 	RecordingDate   string // 录入日期
 }

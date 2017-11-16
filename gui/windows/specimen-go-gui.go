@@ -270,12 +270,12 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 文件读取及解析
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	log.Printf("开始读取 entry 数据文件 ...\n")
+	log.Printf("开始读取 offline 数据文件 ...\n")
 	mw.progressBar.SetValue(1)
-	entryDataMatrix := files.GetDataMatrix(dataFile)
-	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
-	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
-	log.Printf("读取 entry 数据结束！\n")
+	offlineDataMatrix := files.GetDataMatrix(dataFile)
+	offlineDataSlice := converters.ToOfflineDataSlice(offlineDataMatrix)
+	offlineDataMap := converters.GenerateOfflineDataMap(offlineDataSlice)
+	log.Printf("读取 offline 数据结束！\n")
 	mw.progressBar.SetValue(10)
 
 	log.Printf("开始读取 marker 数据文件 ...\n")
@@ -288,7 +288,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 数据校验
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	validationResult := utils.DataValidation(entryDataMatrix, markerDataMatrix)
+	validationResult := utils.DataValidation(offlineDataMatrix, markerDataMatrix)
 	if !validationResult.Result {
 		for i, failureInfo := range validationResult.FailureInfo {
 			log.Printf("错误（%d）%s\n", i+1, failureInfo)
@@ -311,7 +311,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始提取网络信息，这可能会花费一些时间，请耐心等待 ...\n")
 	mw.progressBar.SetValue(40)
-	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
+	speciesNames := converters.ExtractSpeciesNames(offlineDataSlice)
 	webInfoMap := web.GenerateWebInfoMap(speciesNames)
 	log.Printf("提取网络信息结束！\n")
 	mw.progressBar.SetValue(60)
@@ -326,7 +326,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 		markerDataSlice = markerDataSlice[1:] // 去除 marker 文件中的标题行
 	}
 	for i, marker := range markerDataSlice {
-		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
+		resultData := converters.ToResultData(marker, offlineDataMap, webInfoMap)
 		resultDataSlice[i] = resultData
 	}
 	log.Printf("整合本地数据及网络信息结束！\n")

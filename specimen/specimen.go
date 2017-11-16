@@ -10,15 +10,15 @@ import (
 	"github.com/zxjsdp/specimen-go/web"
 )
 
-func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesMarkerFileHasHeader bool) {
+func RunSpecimenInfo(markerDataFile, offlineDataFile, outputDataFile string, doesMarkerFileHasHeader bool) {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 文件读取及解析
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	log.Printf("开始读取 entry 数据文件 ...（进度 %%1）\n")
-	entryDataMatrix := files.GetDataMatrix(entryDataFile)
-	entryDataSlice := converters.ToEntryDataSlice(entryDataMatrix)
-	entryDataMap := converters.GenerateEntryDataMap(entryDataSlice)
-	log.Printf("读取 entry 数据结束！（进度 %%9）\n")
+	log.Printf("开始读取 offline 数据文件 ...（进度 %%1）\n")
+	offlineDataMatrix := files.GetDataMatrix(offlineDataFile)
+	offlineDataSlice := converters.ToOfflineDataSlice(offlineDataMatrix)
+	offlineDataMap := converters.GenerateOfflineDataMap(offlineDataSlice)
+	log.Printf("读取 offline 数据结束！（进度 %%9）\n")
 
 	log.Printf("开始读取 marker 数据文件 ...（进度 %%10）\n")
 	markerDataMatrix := files.GetDataMatrix(markerDataFile)
@@ -28,7 +28,7 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 数据校验
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	validationResult := utils.DataValidation(entryDataMatrix, markerDataMatrix)
+	validationResult := utils.DataValidation(offlineDataMatrix, markerDataMatrix)
 	if !validationResult.Result {
 		for i, failureInfo := range validationResult.FailureInfo {
 			log.Printf("错误（%d）%s\n", i+1, failureInfo)
@@ -49,7 +49,7 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 	// 从网络获取信息
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始提取网络信息 ...（进度 %%20）\n")
-	speciesNames := converters.ExtractSpeciesNames(entryDataSlice)
+	speciesNames := converters.ExtractSpeciesNames(offlineDataSlice)
 	webInfoMap := web.GenerateWebInfoMap(speciesNames)
 	log.Printf("提取网络信息结束！（进度 %%90）\n")
 
@@ -62,7 +62,7 @@ func RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile string, doesM
 		markerDataSlice = markerDataSlice[1:] // 去除 marker 文件中的标题行
 	}
 	for i, marker := range markerDataSlice {
-		resultData := converters.ToResultData(marker, entryDataMap, webInfoMap)
+		resultData := converters.ToResultData(marker, offlineDataMap, webInfoMap)
 		resultDataSlice[i] = resultData
 	}
 	log.Printf("整合本地数据及网络信息结束！（进度 %%94）\n")
