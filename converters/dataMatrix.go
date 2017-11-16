@@ -67,7 +67,7 @@ func ToEntryDataSlice(d entities.DataMatrix) []entities.EntryData {
 		recordingPerson := cells[17]
 		recordingDate := cells[18]
 
-		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{speciesNumber, inventory}
+		entrySpecimenMetaInfo := entities.EntrySpecimenMetaInfo{SpeciesNumber: speciesNumber, Inventory: inventory}
 		entryCollectingInfo := entities.EntryCollectingInfo{
 			Province:       province,
 			City:           city,

@@ -31,5 +31,5 @@ func parseArgument() (string, string, string) {
 
 func main() {
 	markerDataFile, entryDataFile, outputDataFile := parseArgument()
-	specimen.RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile)
+	specimen.RunSpecimenInfo(markerDataFile, entryDataFile, outputDataFile, true)
 }
