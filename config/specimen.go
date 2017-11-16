@@ -1,6 +1,6 @@
 package config
 
-const Version = "V1.3.0" // 请勿手动修改， 应使用 bumpversion 自动更新
+const Version = "V1.4.0" // 请勿手动修改， 应使用 bumpversion 自动更新
 
 // Const: specimen info
 const (
