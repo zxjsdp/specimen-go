@@ -22,3 +22,12 @@ func CheckFileExists(fileName, description, usage string) {
 		}
 	}
 }
+
+func GetCurrentWorkingDir() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("获取路径失败！%s\n", err)
+		return ""
+	}
+	return dir
+}

@@ -24,10 +24,12 @@ import (
 )
 
 const (
-	Title    = "植物标本录入软件"
-	Width    = 800
-	Height   = 700
-	IconPath = "../resources/icon.ico"
+	Title            = "植物标本录入软件"
+	Width            = 800
+	Height           = 700
+	HelpWindowWidth  = 1200
+	HelpWindowHeight = 700
+	IconPath         = "../resources/icon.ico"
 
 	Separater = "========================================================="
 )
@@ -121,6 +123,10 @@ func RunMainWindow() {
 					Action{
 						Text:        "帮助",
 						OnTriggered: mw.helpAction_Triggered,
+					},
+					Action{
+						Text:        "示例",
+						OnTriggered: mw.demoAction_Triggered,
 					},
 					Separator{},
 					Action{
@@ -381,4 +387,67 @@ func (mw *MyMainWindow) helpAction_Triggered() {
 func (mw *MyMainWindow) aboutAction_Triggered() {
 	about := fmt.Sprintf("%s\nspecimen-go GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
 	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
+}
+
+func (mw *MyMainWindow) demoAction_Triggered() {
+	if _, err := showDemoDialog(mw); err != nil {
+		log.Print(err)
+	}
+}
+
+// Demo
+
+type OfflineDataTableModel struct {
+	walk.TableModelBase
+	walk.SorterBase
+	sortColumn int
+	sortOrder  walk.SortOrder
+	items      []*entities.OfflineDataModel
+}
+
+func NewOfflineDataTableModel() *OfflineDataTableModel {
+	m := new(OfflineDataTableModel)
+	m.items = []*entities.OfflineDataModel{
+		{
+			SpeciesNumber:     "ZY20170001",     // 物种编号
+			ChineseName:       "蔓长春花",           // 中文名
+			FullLatinName:     "Vinca major",    // 种名（拉丁名）
+			FamilyChineseName: "夹竹桃科",           // 科名（中文）
+			FamilyLatinName:   "Apocynaceae",    // 科名（拉丁名）
+			Province:          "上海",             // 省
+			City:              "上海市",            // 市
+			DetailedPlace:     "杨浦区淞沪路嘉誉湾",      // 具体小地名
+			Latitude:          "N31°20′30.75″",  // 纬度
+			Longitude:         "E121°30′10.99″", // 经度
+			Altitude:          "10",             // 海拔
+			CollectingDate:    "20170423",       // 采集日期
+			Inventory:         "3",              // 库存
+			Habit:             "半灌木",            // 习性（草灌）
+			Collector:         "张三",             // 采集人
+			Identifier:        "李四",             // 鉴定人
+			IdentifyDate:      "20170426",       // 鉴定日期
+			RecordingPerson:   "王五",             // 录入人
+			RecordingDate:     "20171018",       // 录入日期
+		},
+	}
+	return m
+}
+
+func showDemoDialog(mw *MyMainWindow) (int, error) {
+	var dialog *walk.Dialog
+
+	//offlineDataModel := NewOfflineDataTableModel()
+
+	return Dialog{
+		AssignTo: &dialog,
+		Title:    "示例数据",
+		MinSize:  Size{Width: HelpWindowWidth, Height: HelpWindowHeight},
+		Layout:   VBox{},
+		Children: []Widget{
+			WebView{
+				Name: "Demo",
+				URL:  utils.GetCurrentWorkingDir() + "\\demo.html",
+			},
+		},
+	}.Run(mw)
 }
