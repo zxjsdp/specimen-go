@@ -10,7 +10,6 @@ import (
 )
 
 import (
-	"io/ioutil"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -24,10 +23,12 @@ import (
 )
 
 const (
-	Title    = "植物标本录入软件"
-	Width    = 800
-	Height   = 700
-	IconPath = "../resources/icon.ico"
+	Title            = config.Title + " " + config.Version
+	Width            = 850
+	Height           = 700
+	HelpWindowWidth  = 1300
+	HelpWindowHeight = 700
+	IconPath         = "../resources/icon.ico"
 
 	Separater = "========================================================="
 )
@@ -77,23 +78,6 @@ func main() {
 	RunMainWindow()
 }
 
-func getXlsxFiles() []string {
-	files, err := ioutil.ReadDir("./")
-	xlsxFiles := []string{}
-	if err != nil {
-		log.Fatal(err)
-		return xlsxFiles
-	}
-
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), "xlsx") {
-			xlsxFiles = append(xlsxFiles, f.Name())
-		}
-	}
-
-	return xlsxFiles
-}
-
 func RunMainWindow() {
 	mw := &MyMainWindow{}
 
@@ -120,12 +104,20 @@ func RunMainWindow() {
 				Items: []MenuItem{
 					Action{
 						Text:        "帮助",
-						OnTriggered: mw.helpAction_Triggered,
+						OnTriggered: mw.helpActionTriggered,
+					},
+					Action{
+						Text:        "数据格式",
+						OnTriggered: mw.demoDisplayActionTriggered,
+					},
+					Action{
+						Text:        "示例文件",
+						OnTriggered: mw.generateDemoXlsxFileActionTriggered,
 					},
 					Separator{},
 					Action{
 						Text:        "关于",
-						OnTriggered: mw.aboutAction_Triggered,
+						OnTriggered: mw.aboutActionTriggered,
 					},
 				},
 			},
@@ -146,7 +138,7 @@ func RunMainWindow() {
 					ComboBox{
 						Editable: true,
 						AssignTo: &mw.combo1,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo1,
 						ToolTipText:           "选取或者填写 “流水号” 文件名称",
 					},
@@ -165,7 +157,7 @@ func RunMainWindow() {
 					ComboBox{
 						Editable: true,
 						AssignTo: &mw.combo2,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo2,
 						ToolTipText:           "选取或者填写 “鉴定录入文件” 名称",
 					},
@@ -183,8 +175,9 @@ func RunMainWindow() {
 					},
 					ComboBox{
 						Editable: true,
+						Value:    "标本录入输出文件." + utils.GetFormattedTimeInfo() + ".xlsx",
 						AssignTo: &mw.combo3,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo3,
 						ToolTipText:           "选取或者填写 “输出文件” 名称",
 					},
@@ -209,6 +202,22 @@ func RunMainWindow() {
 					},
 					HSpacer{},
 					PushButton{
+						Text:        "数据格式",
+						AssignTo:    &mw.startButton,
+						ToolTipText: "展示数据格式",
+						OnClicked: func() {
+							mw.demoDisplayActionTriggered()
+						},
+					},
+					PushButton{
+						Text:        "示例文件",
+						AssignTo:    &mw.startButton,
+						ToolTipText: "生成示例文件",
+						OnClicked: func() {
+							mw.generateDemoXlsxFileActionTriggered()
+						},
+					},
+					PushButton{
 						Text:        "开始处理",
 						AssignTo:    &mw.startButton,
 						ToolTipText: "开始进行植物标本数据处理",
@@ -217,16 +226,23 @@ func RunMainWindow() {
 							dataFile := mw.combo2.Text()
 							outputFile := mw.combo3.Text()
 
+							errorMessage := ""
 							if len(queryFile) == 0 || len(strings.TrimSpace(queryFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（流水号文件）")
+								errorMessage = "错误！文件名不能为空（流水号文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 							if len(dataFile) == 0 || len(strings.TrimSpace(dataFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（鉴定录入文件）")
+								errorMessage = "错误！文件名不能为空（鉴定录入文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 							if len(outputFile) == 0 || len(strings.TrimSpace(outputFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（输出文件）")
+								errorMessage = "错误！文件名不能为空（输出文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 
@@ -299,6 +315,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 
 		log.Printf("请解决上述错误后再重新运行。程序即将退出！\n")
 		mw.progressBar.SetValue(0)
+		mw.errorActionTriggered("数据格式错误，请解决错误后再重新运行！")
 		return
 	} else {
 		for i, warningInfo := range validationResult.WarningInfo {
@@ -337,10 +354,12 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始将结果信息写入 xlsx 输出文件...\n")
 	mw.progressBar.SetValue(90)
-	files.SaveDataMatrix(outputFile, resultDataSlice)
+	files.SaveResultDataToXlsx(outputFile, resultDataSlice)
 
 	log.Printf("任务完成！\n")
 	mw.progressBar.SetValue(100)
+
+	mw.finishActionTriggered("任务完成！请查看输出文件：\n" + outputFile)
 }
 
 func (mw *MyMainWindow) openButton_Triggered() {
@@ -374,11 +393,58 @@ func (mw *MyMainWindow) openFile() (string, error) {
 	return dlg.FilePath, nil
 }
 
-func (mw *MyMainWindow) helpAction_Triggered() {
-	walk.MsgBox(mw, "帮助", "使用帮助", walk.MsgBoxIconInformation)
+func (mw *MyMainWindow) finishActionTriggered(message string) {
+	walk.MsgBox(mw, "结果", message, walk.MsgBoxIconInformation)
 }
 
-func (mw *MyMainWindow) aboutAction_Triggered() {
-	about := fmt.Sprintf("%s\nspecimen-go GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
-	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
+func (mw *MyMainWindow) errorActionTriggered(message string) {
+	walk.MsgBox(mw, "错误", message, walk.MsgBoxIconError)
+}
+
+func (mw *MyMainWindow) helpActionTriggered() {
+	walk.MsgBox(mw, "帮助", config.HelpMessage, walk.MsgBoxIconInformation)
+}
+
+func (mw *MyMainWindow) aboutActionTriggered() {
+	walk.MsgBox(mw, "关于", config.About, walk.MsgBoxIconInformation)
+}
+
+// 展示示例数据窗口
+func (mw *MyMainWindow) demoDisplayActionTriggered() {
+	if _, err := showDemoDialog(mw); err != nil {
+		log.Print(err)
+	}
+}
+
+// 展示示例数据窗口
+func showDemoDialog(mw *MyMainWindow) (int, error) {
+	var dialog *walk.Dialog
+
+	demoHTMLFilePath := utils.GetDemoHTMLFilePath()
+
+	return Dialog{
+		AssignTo: &dialog,
+		Title:    "示例数据",
+		MinSize:  Size{Width: HelpWindowWidth, Height: HelpWindowHeight},
+		Layout:   VBox{},
+		Children: []Widget{
+			WebView{
+				Name: "Demo",
+				URL:  demoHTMLFilePath,
+			},
+		},
+	}.Run(mw)
+}
+
+func (mw *MyMainWindow) generateDemoXlsxFileActionTriggered() {
+	snDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoSNFileName)
+	offlineDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoOfflineFileName)
+
+	snDemoDataMatrix := converters.FromTwoDimensionalSlice(config.SNFileDemoData, entities.SnDataCellMap)
+	offlineDemoDataMatrix := converters.FromTwoDimensionalSlice(config.OfflineDemoData, entities.OfflineDataCellMap)
+
+	files.SaveDataMatrixToXlsx(snDemoFile, snDemoDataMatrix)
+	files.SaveDataMatrixToXlsx(offlineDemoFile, offlineDemoDataMatrix)
+
+	mw.statusBar.SetText(fmt.Sprintf("已生成示例文件：%s | %s", config.DemoSNFileName, config.DemoOfflineFileName))
 }
