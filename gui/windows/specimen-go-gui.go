@@ -104,20 +104,20 @@ func RunMainWindow() {
 				Items: []MenuItem{
 					Action{
 						Text:        "帮助",
-						OnTriggered: mw.helpAction_Triggered,
+						OnTriggered: mw.helpActionTriggered,
 					},
 					Action{
 						Text:        "数据格式",
-						OnTriggered: mw.demoAction_Triggered,
+						OnTriggered: mw.demoDisplayActionTriggered,
 					},
 					Action{
 						Text:        "示例文件",
-						OnTriggered: mw.generateDemoXlsxFileAction_Triggered,
+						OnTriggered: mw.generateDemoXlsxFileActionTriggered,
 					},
 					Separator{},
 					Action{
 						Text:        "关于",
-						OnTriggered: mw.aboutAction_Triggered,
+						OnTriggered: mw.aboutActionTriggered,
 					},
 				},
 			},
@@ -205,7 +205,7 @@ func RunMainWindow() {
 						AssignTo:    &mw.startButton,
 						ToolTipText: "展示数据格式",
 						OnClicked: func() {
-							mw.demoAction_Triggered()
+							mw.demoDisplayActionTriggered()
 						},
 					},
 					PushButton{
@@ -213,7 +213,7 @@ func RunMainWindow() {
 						AssignTo:    &mw.startButton,
 						ToolTipText: "生成示例文件",
 						OnClicked: func() {
-							mw.generateDemoXlsxFileAction_Triggered()
+							mw.generateDemoXlsxFileActionTriggered()
 						},
 					},
 					PushButton{
@@ -225,16 +225,23 @@ func RunMainWindow() {
 							dataFile := mw.combo2.Text()
 							outputFile := mw.combo3.Text()
 
+							errorMessage := ""
 							if len(queryFile) == 0 || len(strings.TrimSpace(queryFile)) == 0 {
-								mw.statusBar.SetText("错误！文件名不能为空（流水号文件）")
+								errorMessage = "错误！文件名不能为空（流水号文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 							if len(dataFile) == 0 || len(strings.TrimSpace(dataFile)) == 0 {
-								mw.statusBar.SetText("错误！文件名不能为空（鉴定录入文件）")
+								errorMessage = "错误！文件名不能为空（鉴定录入文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 							if len(outputFile) == 0 || len(strings.TrimSpace(outputFile)) == 0 {
-								mw.statusBar.SetText("错误！文件名不能为空（输出文件）")
+								errorMessage = "错误！文件名不能为空（输出文件）"
+								mw.statusBar.SetText(errorMessage)
+								mw.errorActionTriggered(errorMessage)
 								return
 							}
 
@@ -307,6 +314,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 
 		log.Printf("请解决上述错误后再重新运行。程序即将退出！\n")
 		mw.progressBar.SetValue(0)
+		mw.errorActionTriggered("数据格式错误，请解决错误后再重新运行！")
 		return
 	} else {
 		for i, warningInfo := range validationResult.WarningInfo {
@@ -349,6 +357,8 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 
 	log.Printf("任务完成！\n")
 	mw.progressBar.SetValue(100)
+
+	mw.finishActionTriggered("任务完成！请查看输出文件：\n" + outputFile)
 }
 
 func (mw *MyMainWindow) openButton_Triggered() {
@@ -382,20 +392,24 @@ func (mw *MyMainWindow) openFile() (string, error) {
 	return dlg.FilePath, nil
 }
 
-func (mw *MyMainWindow) errorDialog(message string) {
-
+func (mw *MyMainWindow) finishActionTriggered(message string) {
+	walk.MsgBox(mw, "结果", message, walk.MsgBoxIconInformation)
 }
 
-func (mw *MyMainWindow) helpAction_Triggered() {
+func (mw *MyMainWindow) errorActionTriggered(message string) {
+	walk.MsgBox(mw, "错误", message, walk.MsgBoxIconError)
+}
+
+func (mw *MyMainWindow) helpActionTriggered() {
 	walk.MsgBox(mw, "帮助", config.HelpMessage, walk.MsgBoxIconInformation)
 }
 
-func (mw *MyMainWindow) aboutAction_Triggered() {
+func (mw *MyMainWindow) aboutActionTriggered() {
 	walk.MsgBox(mw, "关于", config.About, walk.MsgBoxIconInformation)
 }
 
 // 展示示例数据窗口
-func (mw *MyMainWindow) demoAction_Triggered() {
+func (mw *MyMainWindow) demoDisplayActionTriggered() {
 	if _, err := showDemoDialog(mw); err != nil {
 		log.Print(err)
 	}
@@ -421,7 +435,7 @@ func showDemoDialog(mw *MyMainWindow) (int, error) {
 	}.Run(mw)
 }
 
-func (mw *MyMainWindow) generateDemoXlsxFileAction_Triggered() {
+func (mw *MyMainWindow) generateDemoXlsxFileActionTriggered() {
 	snDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoSNFileName)
 	offlineDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoOfflineFileName)
 
