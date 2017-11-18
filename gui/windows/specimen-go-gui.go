@@ -436,7 +436,7 @@ func NewOfflineDataTableModel() *OfflineDataTableModel {
 func showDemoDialog(mw *MyMainWindow) (int, error) {
 	var dialog *walk.Dialog
 
-	//offlineDataModel := NewOfflineDataTableModel()
+	demoHTMLFilePath := utils.GetDemoHTMLFilePath()
 
 	return Dialog{
 		AssignTo: &dialog,
@@ -446,7 +446,7 @@ func showDemoDialog(mw *MyMainWindow) (int, error) {
 		Children: []Widget{
 			WebView{
 				Name: "Demo",
-				URL:  utils.GetCurrentWorkingDir() + "\\demo.html",
+				URL:  demoHTMLFilePath,
 			},
 		},
 	}.Run(mw)

@@ -1,0 +1,146 @@
+package config
+
+const USAGE = `
+
+使用方法：
+
+1. 直接双击 specimen-go 文件以运行用户界面程序；
+2. 在命令行中通过参数运行：
+
+   ./specimen-go -query query.xlsx -data data.xlsx -output output.xlsx
+
+`
+
+var DemoHTMLContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <style type="text/css">
+        .tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
+        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;}
+        .tg .tg-h31u{font-family:Arial, Helvetica, sans-serif !important;;vertical-align:top}
+        .tg .tg-yw4l{vertical-align:top}
+    </style>
+</head>
+<body>
+<h2>鉴定录入文件示例</h2>
+<table class="tg">
+    <tr>
+        <th class="tg-yw4l">物种编号</th>
+        <th class="tg-yw4l">中文名</th>
+        <th class="tg-yw4l">种名（拉丁）</th>
+        <th class="tg-yw4l">科名</th>
+        <th class="tg-yw4l">科名（拉丁）</th>
+        <th class="tg-yw4l">省</th>
+        <th class="tg-yw4l">市</th>
+        <th class="tg-yw4l">具体小地名</th>
+        <th class="tg-yw4l">纬</th>
+        <th class="tg-yw4l">东经</th>
+        <th class="tg-yw4l">海拔</th>
+        <th class="tg-yw4l">日期</th>
+        <th class="tg-yw4l">份数</th>
+        <th class="tg-yw4l">草灌</th>
+        <th class="tg-yw4l">采集人</th>
+        <th class="tg-yw4l">鉴定人</th>
+        <th class="tg-yw4l">鉴定日期</th>
+        <th class="tg-yw4l">录入人</th>
+        <th class="tg-yw4l">录入日期</th>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170001</td>
+        <td class="tg-yw4l">蔓长春花</td>
+        <td class="tg-yw4l">Vinca major</td>
+        <td class="tg-yw4l">夹竹桃科</td>
+        <td class="tg-h31u">Apocynaceae</td>
+        <td class="tg-yw4l">上海</td>
+        <td class="tg-yw4l">上海市</td>
+        <td class="tg-yw4l">杨浦区淞沪路嘉誉湾</td>
+        <td class="tg-yw4l">N31°20′30.75″</td>
+        <td class="tg-yw4l">E121°30′10.99″</td>
+        <td class="tg-yw4l">10</td>
+        <td class="tg-yw4l">20170423</td>
+        <td class="tg-yw4l">3</td>
+        <td class="tg-yw4l">半灌木</td>
+        <td class="tg-yw4l">张三</td>
+        <td class="tg-yw4l">李四</td>
+        <td class="tg-yw4l">20170426</td>
+        <td class="tg-yw4l">王五</td>
+        <td class="tg-yw4l">20171018</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170002</td>
+        <td class="tg-yw4l">红花檵木</td>
+        <td class="tg-yw4l">Loropetalum chinense</td>
+        <td class="tg-yw4l">金缕梅科</td>
+        <td class="tg-yw4l">Hamamelidaceae</td>
+        <td class="tg-yw4l">上海</td>
+        <td class="tg-yw4l">上海市</td>
+        <td class="tg-yw4l">杨浦区淞沪路嘉誉湾</td>
+        <td class="tg-yw4l">N31°20′30.76″</td>
+        <td class="tg-yw4l">E121°30′10.100″</td>
+        <td class="tg-yw4l">10</td>
+        <td class="tg-yw4l">20170423</td>
+        <td class="tg-yw4l">3</td>
+        <td class="tg-yw4l">灌木</td>
+        <td class="tg-yw4l">张三</td>
+        <td class="tg-yw4l">李四</td>
+        <td class="tg-yw4l">20170426</td>
+        <td class="tg-yw4l">王五</td>
+        <td class="tg-yw4l">20171018</td>
+    </tr>
+</table>
+
+
+<h2>流水号文件示例</h2>
+
+<table class="tg">
+    <tr>
+        <th class="tg-yw4l">物种编号</th>
+        <th class="tg-yw4l">流水号</th>
+        <th class="tg-yw4l">条形码</th>
+        <th class="tg-yw4l">同一物种的个体编号（1、2、3、...）</th>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170001</td>
+        <td class="tg-yw4l">123167</td>
+        <td class="tg-yw4l">107930</td>
+        <td class="tg-yw4l">1</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170001</td>
+        <td class="tg-yw4l">123168</td>
+        <td class="tg-yw4l">107931</td>
+        <td class="tg-yw4l">2</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170001</td>
+        <td class="tg-yw4l">123168</td>
+        <td class="tg-yw4l">107932</td>
+        <td class="tg-yw4l">3</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170002</td>
+        <td class="tg-yw4l">123170</td>
+        <td class="tg-yw4l">107933</td>
+        <td class="tg-yw4l">1</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170002</td>
+        <td class="tg-yw4l">123171</td>
+        <td class="tg-yw4l">107934</td>
+        <td class="tg-yw4l">2</td>
+    </tr>
+    <tr>
+        <td class="tg-yw4l">ZY20170002</td>
+        <td class="tg-yw4l">123172</td>
+        <td class="tg-yw4l">107935</td>
+        <td class="tg-yw4l">3</td>
+    </tr>
+</table>
+
+</body>
+</html>
+`
