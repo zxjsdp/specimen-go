@@ -10,7 +10,6 @@ import (
 )
 
 import (
-	"io/ioutil"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -24,8 +23,8 @@ import (
 )
 
 const (
-	Title            = "植物标本录入软件"
-	Width            = 800
+	Title            = config.Title + " " + config.Version
+	Width            = 850
 	Height           = 700
 	HelpWindowWidth  = 1300
 	HelpWindowHeight = 700
@@ -79,23 +78,6 @@ func main() {
 	RunMainWindow()
 }
 
-func getXlsxFiles() []string {
-	files, err := ioutil.ReadDir("./")
-	xlsxFiles := []string{}
-	if err != nil {
-		log.Fatal(err)
-		return xlsxFiles
-	}
-
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), "xlsx") {
-			xlsxFiles = append(xlsxFiles, f.Name())
-		}
-	}
-
-	return xlsxFiles
-}
-
 func RunMainWindow() {
 	mw := &MyMainWindow{}
 
@@ -125,8 +107,12 @@ func RunMainWindow() {
 						OnTriggered: mw.helpAction_Triggered,
 					},
 					Action{
-						Text:        "示例",
+						Text:        "数据格式",
 						OnTriggered: mw.demoAction_Triggered,
+					},
+					Action{
+						Text:        "示例文件",
+						OnTriggered: mw.generateDemoXlsxFileAction_Triggered,
 					},
 					Separator{},
 					Action{
@@ -152,7 +138,7 @@ func RunMainWindow() {
 					ComboBox{
 						Editable: true,
 						AssignTo: &mw.combo1,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo1,
 						ToolTipText:           "选取或者填写 “流水号” 文件名称",
 					},
@@ -171,7 +157,7 @@ func RunMainWindow() {
 					ComboBox{
 						Editable: true,
 						AssignTo: &mw.combo2,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo2,
 						ToolTipText:           "选取或者填写 “鉴定录入文件” 名称",
 					},
@@ -190,7 +176,7 @@ func RunMainWindow() {
 					ComboBox{
 						Editable: true,
 						AssignTo: &mw.combo3,
-						Model:    getXlsxFiles(),
+						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo3,
 						ToolTipText:           "选取或者填写 “输出文件” 名称",
 					},
@@ -215,11 +201,19 @@ func RunMainWindow() {
 					},
 					HSpacer{},
 					PushButton{
-						Text:        "示例数据",
+						Text:        "数据格式",
 						AssignTo:    &mw.startButton,
-						ToolTipText: "展示示例数据",
+						ToolTipText: "展示数据格式",
 						OnClicked: func() {
 							mw.demoAction_Triggered()
+						},
+					},
+					PushButton{
+						Text:        "示例文件",
+						AssignTo:    &mw.startButton,
+						ToolTipText: "生成示例文件",
+						OnClicked: func() {
+							mw.generateDemoXlsxFileAction_Triggered()
 						},
 					},
 					PushButton{
@@ -351,7 +345,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始将结果信息写入 xlsx 输出文件...\n")
 	mw.progressBar.SetValue(90)
-	files.SaveDataMatrix(outputFile, resultDataSlice)
+	files.SaveResultDataToXlsx(outputFile, resultDataSlice)
 
 	log.Printf("任务完成！\n")
 	mw.progressBar.SetValue(100)
@@ -397,8 +391,7 @@ func (mw *MyMainWindow) helpAction_Triggered() {
 }
 
 func (mw *MyMainWindow) aboutAction_Triggered() {
-	about := fmt.Sprintf("%s\nspecimen-go GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, config.Version)
-	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
+	walk.MsgBox(mw, "关于", config.About, walk.MsgBoxIconInformation)
 }
 
 // 展示示例数据窗口
@@ -426,4 +419,17 @@ func showDemoDialog(mw *MyMainWindow) (int, error) {
 			},
 		},
 	}.Run(mw)
+}
+
+func (mw *MyMainWindow) generateDemoXlsxFileAction_Triggered() {
+	snDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoSNFileName)
+	offlineDemoFile := utils.GenerateCurrentWorkingDirFilePath(config.DemoOfflineFileName)
+
+	snDemoDataMatrix := converters.FromTwoDimensionalSlice(config.SNFileDemoData, entities.SnDataCellMap)
+	offlineDemoDataMatrix := converters.FromTwoDimensionalSlice(config.OfflineDemoData, entities.OfflineDataCellMap)
+
+	files.SaveDataMatrixToXlsx(snDemoFile, snDemoDataMatrix)
+	files.SaveDataMatrixToXlsx(offlineDemoFile, offlineDemoDataMatrix)
+
+	mw.statusBar.SetText(fmt.Sprintf("已生成示例文件：%s | %s", config.DemoSNFileName, config.DemoOfflineFileName))
 }

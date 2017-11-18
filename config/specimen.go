@@ -1,6 +1,15 @@
 package config
 
-const Version = "V1.5.0" // 请勿手动修改， 应使用 bumpversion 自动更新
+import (
+	"fmt"
+)
+
+const (
+	Version = "V1.5.0" // 请勿手动修改， 应使用 bumpversion 自动更新
+	Title   = "植物标本录入软件"
+)
+
+var About = fmt.Sprintf("%s\nspecimen-go GUI %s by zxjsdp\n复旦大学生科院 G417 实验室", Title, Version)
 
 // Const: specimen info
 const (

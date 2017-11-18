@@ -83,8 +83,12 @@ func ReadContent(filename string) string {
 	return strings.Join(lines, "\n")
 }
 
+func GenerateCurrentWorkingDirFilePath(fileName string) string {
+	return path.Join(GetCurrentWorkingDir(), fileName)
+}
+
 func GetDemoHTMLFilePath() string {
-	demoHTMLFilePath := path.Join(GetCurrentWorkingDir(), config.DemoHTMLFileName)
+	demoHTMLFilePath := GenerateCurrentWorkingDirFilePath(config.DemoHTMLFileName)
 	if !IsFileExists(demoHTMLFilePath) {
 		WriteContent(demoHTMLFilePath, config.DemoHTMLContent)
 	}
@@ -98,4 +102,21 @@ func WriteContent(filename, content string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func GetXlsxFiles() []string {
+	files, err := ioutil.ReadDir("./")
+	xlsxFiles := []string{}
+	if err != nil {
+		log.Fatal(err)
+		return xlsxFiles
+	}
+
+	for _, f := range files {
+		if strings.HasSuffix(f.Name(), "xlsx") {
+			xlsxFiles = append(xlsxFiles, f.Name())
+		}
+	}
+
+	return xlsxFiles
 }

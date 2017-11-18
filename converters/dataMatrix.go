@@ -27,6 +27,28 @@ func FromResultDataSlice(resultDataSlice []entities.ResultData) entities.DataMat
 	return dataMatrix
 }
 
+func FromTwoDimensionalSlice(twoDimensionalData [][]string, dataHeaderMap [][]string) entities.DataMatrix {
+	dataMatrix := entities.DataMatrix{}
+	if len(twoDimensionalData) == 0 {
+		return dataMatrix
+	}
+
+	headerSlice := make([]string, 0)
+	for _, tuple := range dataHeaderMap {
+		headerSlice = append(headerSlice, tuple[1])
+	}
+	dataMatrix.Header = headerSlice
+
+	for _, dataSlice := range twoDimensionalData {
+		dataMatrix.Matrix = append(dataMatrix.Matrix, dataSlice)
+	}
+
+	dataMatrix.RowCount = len(twoDimensionalData)
+	dataMatrix.ColumnCount = len(twoDimensionalData[0])
+
+	return dataMatrix
+}
+
 // DataMatrix 转换至 SnData slice
 func ToSnDataSlice(d entities.DataMatrix) []entities.SnData {
 	snDataSlice := make([]entities.SnData, 0)

@@ -40,22 +40,29 @@ func GetDataMatrix(xlsxFileName string) entities.DataMatrix {
 	return entities.DataMatrix{FileName: xlsxFileName, Matrix: matrix, RowCount: rowCount, ColumnCount: columnCount}
 }
 
-func SaveDataMatrix(xlsxFileName string, resultDataSlice []entities.ResultData) {
+func SaveResultDataToXlsx(xlsxFileName string, resultDataSlice []entities.ResultData) {
 	if len(resultDataSlice) == 0 {
 		log.Fatal("Cannot save data matrix to xlsx file! Empty data matrix!")
 	}
 
-	xlsx := excelize.NewFile()
+	resultDataMatrix := converters.FromResultDataSlice(resultDataSlice)
+	SaveDataMatrixToXlsx(xlsxFileName, resultDataMatrix)
+}
 
+func SaveDataMatrixToXlsx(xlsxFileName string, dataMatrix entities.DataMatrix) {
+	if dataMatrix.RowCount == 0 {
+		log.Fatal("Cannot save data matrix to xlsx file! Empty data matrix!")
+	}
+
+	xlsx := excelize.NewFile()
 	activeSheetIndex := xlsx.GetActiveSheetIndex()
 	activeSheetName := xlsx.GetSheetName(activeSheetIndex)
 
 	// Set value to cells.
-	resultDataMatrix := converters.FromResultDataSlice(resultDataSlice)
-	for columnIndex, eachHeader := range resultDataMatrix.Header {
+	for columnIndex, eachHeader := range dataMatrix.Header {
 		xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(0, columnIndex), eachHeader)
 	}
-	for rowIndex, row := range resultDataMatrix.Matrix {
+	for rowIndex, row := range dataMatrix.Matrix {
 		for columnIndex, cell := range row {
 			xlsx.SetCellValue(activeSheetName, converters.GenerateAxis(rowIndex+1, columnIndex), cell)
 		}

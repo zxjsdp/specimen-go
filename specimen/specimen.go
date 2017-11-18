@@ -71,7 +71,7 @@ func RunSpecimenInfo(snDataFile, offlineDataFile, outputDataFile string, doesSnF
 	// 将结果写入输出文件
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	log.Printf("开始将结果信息写入 xlsx 输出文件...（进度 %%95）\n")
-	files.SaveDataMatrix(outputDataFile, resultDataSlice)
+	files.SaveResultDataToXlsx(outputDataFile, resultDataSlice)
 
 	log.Printf("任务完成！（进度 %%100）\n")
 }
