@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	Version = "V1.5.0" // 请勿手动修改， 应使用 bumpversion 自动更新
+	Version = "V1.6.0" // 请勿手动修改， 应使用 bumpversion 自动更新
 	Title   = "植物标本录入软件"
 )
 
