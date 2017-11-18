@@ -27,7 +27,7 @@ const (
 	Title            = "植物标本录入软件"
 	Width            = 800
 	Height           = 700
-	HelpWindowWidth  = 1200
+	HelpWindowWidth  = 1300
 	HelpWindowHeight = 700
 	IconPath         = "../resources/icon.ico"
 
@@ -215,6 +215,14 @@ func RunMainWindow() {
 					},
 					HSpacer{},
 					PushButton{
+						Text:        "示例数据",
+						AssignTo:    &mw.startButton,
+						ToolTipText: "展示示例数据",
+						OnClicked: func() {
+							mw.demoAction_Triggered()
+						},
+					},
+					PushButton{
 						Text:        "开始处理",
 						AssignTo:    &mw.startButton,
 						ToolTipText: "开始进行植物标本数据处理",
@@ -224,15 +232,15 @@ func RunMainWindow() {
 							outputFile := mw.combo3.Text()
 
 							if len(queryFile) == 0 || len(strings.TrimSpace(queryFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（流水号文件）")
+								mw.statusBar.SetText("错误！文件名不能为空（流水号文件）")
 								return
 							}
 							if len(dataFile) == 0 || len(strings.TrimSpace(dataFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（鉴定录入文件）")
+								mw.statusBar.SetText("错误！文件名不能为空（鉴定录入文件）")
 								return
 							}
 							if len(outputFile) == 0 || len(strings.TrimSpace(outputFile)) == 0 {
-								mw.statusBar.SetText("文件名不能为空（输出文件）")
+								mw.statusBar.SetText("错误！文件名不能为空（输出文件）")
 								return
 							}
 
@@ -380,8 +388,12 @@ func (mw *MyMainWindow) openFile() (string, error) {
 	return dlg.FilePath, nil
 }
 
+func (mw *MyMainWindow) errorDialog(message string) {
+
+}
+
 func (mw *MyMainWindow) helpAction_Triggered() {
-	walk.MsgBox(mw, "帮助", "使用帮助", walk.MsgBoxIconInformation)
+	walk.MsgBox(mw, "帮助", config.HelpMessage, walk.MsgBoxIconInformation)
 }
 
 func (mw *MyMainWindow) aboutAction_Triggered() {
@@ -389,50 +401,14 @@ func (mw *MyMainWindow) aboutAction_Triggered() {
 	walk.MsgBox(mw, "关于", about, walk.MsgBoxIconInformation)
 }
 
+// 展示示例数据窗口
 func (mw *MyMainWindow) demoAction_Triggered() {
 	if _, err := showDemoDialog(mw); err != nil {
 		log.Print(err)
 	}
 }
 
-// Demo
-
-type OfflineDataTableModel struct {
-	walk.TableModelBase
-	walk.SorterBase
-	sortColumn int
-	sortOrder  walk.SortOrder
-	items      []*entities.OfflineDataModel
-}
-
-func NewOfflineDataTableModel() *OfflineDataTableModel {
-	m := new(OfflineDataTableModel)
-	m.items = []*entities.OfflineDataModel{
-		{
-			SpeciesNumber:     "ZY20170001",     // 物种编号
-			ChineseName:       "蔓长春花",           // 中文名
-			FullLatinName:     "Vinca major",    // 种名（拉丁名）
-			FamilyChineseName: "夹竹桃科",           // 科名（中文）
-			FamilyLatinName:   "Apocynaceae",    // 科名（拉丁名）
-			Province:          "上海",             // 省
-			City:              "上海市",            // 市
-			DetailedPlace:     "杨浦区淞沪路嘉誉湾",      // 具体小地名
-			Latitude:          "N31°20′30.75″",  // 纬度
-			Longitude:         "E121°30′10.99″", // 经度
-			Altitude:          "10",             // 海拔
-			CollectingDate:    "20170423",       // 采集日期
-			Inventory:         "3",              // 库存
-			Habit:             "半灌木",            // 习性（草灌）
-			Collector:         "张三",             // 采集人
-			Identifier:        "李四",             // 鉴定人
-			IdentifyDate:      "20170426",       // 鉴定日期
-			RecordingPerson:   "王五",             // 录入人
-			RecordingDate:     "20171018",       // 录入日期
-		},
-	}
-	return m
-}
-
+// 展示示例数据窗口
 func showDemoDialog(mw *MyMainWindow) (int, error) {
 	var dialog *walk.Dialog
 

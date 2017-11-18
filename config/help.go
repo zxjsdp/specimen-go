@@ -11,7 +11,18 @@ const USAGE = `
 
 `
 
-var DemoHTMLContent = `
+const HelpMessage = `
+使用方式：
+
+1. 选择或输入 “录入鉴定文件名”；
+2. 选择或输入 “流水号文件名”；
+3. 选择或输入 “输出文件名”；
+4. 点击 “开始处理” 以执行标本数据整理、网络查询以及信息聚合任务。
+
+如果需要，可以点击 “示例数据” 按钮以查看示例数据。
+`
+
+const DemoHTMLContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
