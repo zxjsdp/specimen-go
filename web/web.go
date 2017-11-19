@@ -78,7 +78,7 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	}
 
 	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
-	paragraphs, namePublisher := parseParagraphs(latinName)
+	paragraphs, namePublisher, family := parseParagraphs(latinName)
 	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, namePublisher)
 
 	fmt.Printf("    -> 开始寻找最匹配段落：%s\n", latinNameString)
@@ -93,11 +93,13 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 		FullLatinName: latinNameString,
 		Morphology:    morphology,
 		NamePublisher: namePublisher,
+		Family:        family,
 		Habitat:       "",
 	}
 }
 
 // 提取命名人信息
+// TODO, 实现方式需要优化
 func extractNamePublisher(latinName entities.LatinName, doc *goquery.Document) string {
 	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
 	targetText := ""
@@ -125,6 +127,40 @@ func extractNamePublisher(latinName entities.LatinName, doc *goquery.Document) s
 	namePublisher = strings.Replace(namePublisher, latinName.Species, "", -1)
 
 	return strings.TrimSpace(namePublisher)
+}
+
+// extractFamily: 从网页中提取物种的 “科”（family）信息
+// TODO, 实现方式需要优化
+func extractFamily(latinName entities.LatinName, doc *goquery.Document) (family string) {
+	family = ""
+	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
+	var contentDiv *goquery.Selection
+	childrenDiv := spinfoDiv.Children()
+	childrenDiv.Find("div").Each(func(i int, div *goquery.Selection) {
+		if i == 5 {
+			contentDiv = div
+		}
+	})
+
+	if contentDiv == nil {
+		return
+	}
+
+	var familyInfo string
+	contentDiv.Find("a").Each(func(i int, div *goquery.Selection) {
+		if i == 1 {
+			familyInfo = div.Text()
+		}
+	})
+
+	if len(familyInfo) > 0 && strings.Contains(familyInfo, "科") {
+		elements := strings.Fields(familyInfo)
+		if len(elements) == 2 {
+			family = elements[1]
+		}
+	}
+
+	return
 }
 
 // 选择最符合条件的段落
@@ -258,21 +294,26 @@ func parseMorphologyFromContent(paragraph string) entities.Morphology {
 }
 
 // 从网络信息中提取段落及命名人信息
-func parseParagraphs(latinName entities.LatinName) ([]string, string) {
+func parseParagraphs(latinName entities.LatinName) (paragraphs []string, namePublisher string, family string) {
+	paragraphs = []string{}
+	namePublisher = ""
+	family = ""
+
 	url := generateUrl(latinName)
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	paragraphs := make([]string, 0)
+	paragraphs = make([]string, 0)
 	doc.Find("p").Each(func(i int, s *goquery.Selection) {
 		paragraphs = append(paragraphs, s.Text())
 	})
 
-	namePublisher := extractNamePublisher(latinName, doc)
+	namePublisher = extractNamePublisher(latinName, doc)
+	family = extractFamily(latinName, doc)
 
-	return paragraphs, namePublisher
+	return paragraphs, namePublisher, family
 }
 
 // 根据拉丁名拼接 URL
