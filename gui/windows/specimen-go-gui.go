@@ -176,7 +176,7 @@ func RunMainWindow() {
 					},
 					ComboBox{
 						Editable: true,
-						Value:    "标本录入输出文件." + utils.GetFormattedTimeInfo() + ".xlsx",
+						Value:    "_标本输出文件_" + utils.GetFormattedTimeInfo() + ".xlsx",
 						AssignTo: &mw.combo3,
 						Model:    utils.GetXlsxFiles(),
 						OnCurrentIndexChanged: mw.lb_ItemSelected_Combo3,
