@@ -43,7 +43,7 @@ func ToResultData(
 
 		latinName := utils.ParseLatinName(offlineData.FullLatinName)
 		identificationInfo := entities.IdentificationInfo{
-			Family:        latinName.LatinNameString,
+			Family:        "", // TODO, 从网络获取到 “科” 的信息
 			Genus:         latinName.Genus,
 			Species:       latinName.Species,
 			NamePublisher: config.DefaultNamePublisher,
