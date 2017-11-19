@@ -6,7 +6,7 @@
 
 ## 运行方式
 
-下载已经编译好的用户界面版本，点击运行即可。最新版本下载：[specimen-go 最新 V1.7.1 版本](https://github.com/zxjsdp/specimen-go/releases)。
+下载已经编译好的用户界面版本，点击运行即可。最新版本下载：[specimen-go 最新 V1.8.0 版本](https://github.com/zxjsdp/specimen-go/releases)。
 
 也可以使用命令行版本，通过传入参数执行。
 
