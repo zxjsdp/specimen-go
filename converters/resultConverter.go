@@ -65,6 +65,7 @@ func ToResultData(
 		// 若从网络上获取到了相关信息，则替换相应字段为网络信息
 		if webInfo, ok := webInfoMap[offlineData.FullLatinName]; ok {
 			collectingInfo.Habitat = webInfo.Habitat
+			identificationInfo.Family = webInfo.Family
 			identificationInfo.NamePublisher = webInfo.NamePublisher
 
 			morphologyInfo.BodyHeight = webInfo.BodyHeight
