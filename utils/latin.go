@@ -18,8 +18,8 @@ func ParseLatinName(latinNameString string) entities.LatinName {
 	genus := ""
 	species := ""
 	if len(elements) >= 2 {
-		genus = elements[0]
-		species = elements[len(elements)-1]
+		genus = elements[0]   // 第一个元素认为是属
+		species = elements[1] // 第二个元素认为是种。若种为 sp. (config.AmbiguousSpeciesName) 则认为是属中不确定的一种
 	} else if len(elements) == 1 {
 		genus = elements[0]
 	}

@@ -67,6 +67,16 @@ func GenerateWebInfoMapSync(latinNames []string) map[string]entities.WebInfo {
 // 获取并处理网络信息
 func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	latinName := utils.ParseLatinName(latinNameString)
+	if len(latinName.Species) == 0 || strings.HasSuffix(latinName.Species, config.AmbiguousSpeciesName) {
+		// 若没有种名，或者种名为 sp.，则仅鉴定到属，无法从网络获取到比较精确的物种信息
+		return entities.WebInfo{
+			FullLatinName: latinNameString,
+			Morphology:    entities.Morphology{},
+			NamePublisher: "",
+			Habitat:       "",
+		}
+	}
+
 	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
 	paragraphs, namePublisher := parseParagraphs(latinName)
 	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, namePublisher)

@@ -33,3 +33,7 @@ const (
 
 	DefaultSeparator = "；"
 )
+
+const (
+	AmbiguousSpeciesName = "sp."
+)
