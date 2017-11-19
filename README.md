@@ -6,13 +6,15 @@
 
 ## 运行方式
 
-下载已经编译好的可执行文件，点击运行即可。最新版本下载：[specimen-go 最新 V1.6.0 版本](https://github.com/zxjsdp/specimen-go/releases)。
+下载已经编译好的用户界面版本，点击运行即可。最新版本下载：[specimen-go 最新 V1.6.0 版本](https://github.com/zxjsdp/specimen-go/releases)。
 
-也可以在命令行中直接传入参数执行。
+也可以使用命令行版本，通过传入参数执行。
 
 ## 编译方式
 
-获取方式
+### 命令行版本
+
+获取 [specimen-go](https://github.com/zxjsdp/specimen-go)
 
     go get github.com/zxjsdp/specimen-go
 
@@ -20,14 +22,27 @@
 
     go build -o specimen-go
     
-Windows 下 GUI 版本编译方式（MinGW）
-
-    go get github.com/lxn/walk
-    cd "$GOPATH/src/github.com/zxjsdp/specimen-go/gui/windows"
-    go build -ldflags="-H windowsgui" -o specimen-go.exe
-    .\specimen-go.exe
-   
 运行测试用例
 
     go test -v ./...
+
+### Windows 下 GUI 版本编译方式（MinGW）
+
+安装 [walk](https://github.com/lxn/walk)
+
+    go get github.com/lxn/walk
+    
+安装 [rsrs](https://github.com/akavel/rsrc)
+
+    go get github.com/akavel/rsrc
+
+生成需要包含进 golang 可执行文件中的二进制 shared library
+
+    cd "$GOPATH/src/github.com/zxjsdp/specimen-go/gui/windows"
+    rsrc -manifest specimen-go-gui.exe.manifest -o rsrc.syso -ico "../resources/icon.ico"
+
+生成 specimen-go.exe 可执行文件
+
+    go build -ldflags="-H windowsgui" -o specimen-go.exe
+   
 

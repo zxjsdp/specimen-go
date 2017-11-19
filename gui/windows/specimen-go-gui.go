@@ -1,7 +1,3 @@
-// Copyright 2013 The Walk Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package main
 
 import (
@@ -28,9 +24,8 @@ const (
 	Height           = 700
 	HelpWindowWidth  = 1300
 	HelpWindowHeight = 700
-	IconPath         = "../resources/icon.ico"
 
-	Separater = "========================================================="
+	LogInfoSeparator = "========================================================="
 )
 
 type MyMainWindow struct {
@@ -81,11 +76,17 @@ func main() {
 func RunMainWindow() {
 	mw := &MyMainWindow{}
 
+	updateIcon := func() {
+		icon, err := walk.NewIconFromResourceId(3)
+		if err == nil {
+			mw.SetIcon(icon)
+		}
+	}
+
 	if err := (MainWindow{
 		AssignTo: &mw.MainWindow,
 		Title:    Title,
 		MinSize:  Size{Width: Width, Height: Height},
-		Icon:     IconPath,
 		Layout:   VBox{},
 
 		MenuItems: []MenuItem{
@@ -260,7 +261,7 @@ func RunMainWindow() {
 			},
 		},
 	}.Create()); err != nil {
-		log.Fatal(err)
+		log.Println("程序出现致命错误！" + err.Error())
 	}
 
 	log.SetFlags(0)
@@ -272,6 +273,8 @@ func RunMainWindow() {
 
 	log.SetOutput(lv)
 
+	updateIcon()
+
 	mw.Run()
 }
 
@@ -281,7 +284,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	defer mw.startButton.SetEnabled(true)
 	defer mw.startButton.SetText("开始处理")
 
-	log.Printf("%s\n", Separater)
+	log.Printf("%s\n", LogInfoSeparator)
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 文件读取及解析
