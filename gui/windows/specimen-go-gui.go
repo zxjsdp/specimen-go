@@ -81,11 +81,17 @@ func main() {
 func RunMainWindow() {
 	mw := &MyMainWindow{}
 
+	updateIcon := func() {
+		if utils.IsFileExists(IconPath) {
+			icon, _ := walk.NewIconFromFile(IconPath)
+			mw.SetIcon(icon)
+		}
+	}
+
 	if err := (MainWindow{
 		AssignTo: &mw.MainWindow,
 		Title:    Title,
 		MinSize:  Size{Width: Width, Height: Height},
-		Icon:     IconPath,
 		Layout:   VBox{},
 
 		MenuItems: []MenuItem{
@@ -260,7 +266,7 @@ func RunMainWindow() {
 			},
 		},
 	}.Create()); err != nil {
-		log.Fatal(err)
+		log.Println("程序出现致命错误！" + err.Error())
 	}
 
 	log.SetFlags(0)
@@ -271,6 +277,8 @@ func RunMainWindow() {
 	}
 
 	log.SetOutput(lv)
+
+	updateIcon()
 
 	mw.Run()
 }
