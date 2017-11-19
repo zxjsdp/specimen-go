@@ -1,7 +1,3 @@
-// Copyright 2013 The Walk Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package main
 
 import (
@@ -28,9 +24,8 @@ const (
 	Height           = 700
 	HelpWindowWidth  = 1300
 	HelpWindowHeight = 700
-	IconPath         = "../resources/icon.ico"
 
-	Separater = "========================================================="
+	LogInfoSeparator = "========================================================="
 )
 
 type MyMainWindow struct {
@@ -82,8 +77,8 @@ func RunMainWindow() {
 	mw := &MyMainWindow{}
 
 	updateIcon := func() {
-		if utils.IsFileExists(IconPath) {
-			icon, _ := walk.NewIconFromFile(IconPath)
+		icon, err := walk.NewIconFromResourceId(3)
+		if err == nil {
 			mw.SetIcon(icon)
 		}
 	}
@@ -289,7 +284,7 @@ func (mw *MyMainWindow) RunSpecimenInfoGoroutine(queryFile, dataFile, outputFile
 	defer mw.startButton.SetEnabled(true)
 	defer mw.startButton.SetText("开始处理")
 
-	log.Printf("%s\n", Separater)
+	log.Printf("%s\n", LogInfoSeparator)
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// 文件读取及解析
