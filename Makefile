@@ -10,7 +10,6 @@ help:
 
 install:
 	@echo 'compile specimen-go to Windows GUI executable'
-	cd gui/windows
 	go build -o specimen-go
 
 gui-win:
