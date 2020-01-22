@@ -82,23 +82,23 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 
 	fmt.Printf("    → 🌐 开始从网络获取「物种信息」：%s\n", latinNameString)
 	frpsspno, frpsspclassid, paragraphs := parseParagraphs(latinName)
-	fmt.Printf("        ✔︎ 获取到「物种信息」：%s, spno: %s, spclassid: %s\n", latinNameString, frpsspno, frpsspclassid)
+	fmt.Printf("          ✔︎ 获取到「物种信息」：%s, spno: %s, spclassid: %s\n", latinNameString, frpsspno, frpsspclassid)
 
 	fmt.Printf("    → 🧲 开始寻找「最匹配段落」：%s\n", latinNameString)
 	bestMatchParagraph := pickBestMatchedParagraph(latinNameString, paragraphs)
-	fmt.Printf("        ✔︎ 寻找「最匹配段落」完成：%s\n", latinNameString)
+	fmt.Printf("          ✔︎ 寻找「最匹配段落」完成：%s\n", latinNameString)
 
 	fmt.Printf("    → 🧲 开始从最匹配段落中「提取形态描述信息」：%s\n", latinNameString)
 	morphology := getMorphologyFromMultipleParagraphs([]string{bestMatchParagraph})
-	fmt.Printf("        ✔︎ 从最匹配段落中「提取形态描述信息」结束：%s\n", latinNameString)
+	fmt.Printf("          ✔︎ 从最匹配段落中「提取形态描述信息」结束：%s\n", latinNameString)
 
 	fmt.Printf("    → 🌐 开始从网络获取「命名人」信息：%s\n", latinNameString)
 	namePublisher := parseNamePublisher(latinName)
-	fmt.Printf("        ✔︎ 获取到「命名人」信息: %s %s\n", latinNameString, namePublisher)
+	fmt.Printf("          ✔︎ 获取到「命名人」信息: %s %s\n", latinNameString, namePublisher)
 
 	fmt.Printf("    → 🌐 开始从网络获取「物种分类（Texomony，界门纲目科属种）」信息：%s\n", latinNameString)
 	phylum, class, order, family, genus := parseTaxonomyInfo(frpsspno, frpsspclassid)
-	fmt.Printf("        ✔︎ 获取到「物种分类（Texomony，界门纲目科属种）」信息: %s %s → %s %s %s %s %s\n", latinNameString, namePublisher, phylum, class, order, family, genus)
+	fmt.Printf("          ✔︎ 获取到「物种分类（Texomony，界门纲目科属种）」信息: %s %s → %s %s %s %s %s\n", latinNameString, namePublisher, phylum, class, order, family, genus)
 
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
@@ -309,7 +309,7 @@ func parseTaxonomyInfo(frpsspno string, frpsspclassid string) (phylum string, cl
 	var responseMap map[string]string
 	err = json.NewDecoder(resp.Body).Decode(&responseMap)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	frpsclasstxt := responseMap[config.FrpsclasstxtKeyInResponseMap]
@@ -351,7 +351,7 @@ func parseParagraphs(latinName entities.LatinName) (frpsspno string, frpsspclass
 	var responseMap map[string]string
 	err = json.NewDecoder(resp.Body).Decode(&responseMap)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	frpsspno = responseMap[config.FrpsspnoKeyInResponseMap]
