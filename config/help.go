@@ -11,10 +11,10 @@ const USAGE = `
 
 使用方法：
 
-1. 直接双击 specimen-go 文件以运行用户界面程序；
-2. 在命令行中通过参数运行：
+1. 直接双击 specimen-go 文件以运行用户界面程序（仅在 Windows 平台下支持 GUI）；
+2. 在命令行中通过参数运行（支持所有平台）：
 
-   ./specimen-go -s 流水号数据.xlsx -d 鉴定录入文件.xlsx -o 输出文件.xlsx
+    ./specimen-go -s 流水号数据.xlsx -d 鉴定录入文件.xlsx -o 输出文件.xlsx
 
 `
 
