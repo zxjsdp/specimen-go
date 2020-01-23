@@ -1,9 +1,12 @@
 package web
 
 import (
-	"strings"
-
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
 
 	"log"
 
@@ -77,17 +80,25 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 		}
 	}
 
-	fmt.Printf("    -> 开始从网络获取物种信息：%s\n", latinNameString)
-	paragraphs, namePublisher, family := parseParagraphs(latinName)
-	fmt.Printf("    <- 获取到物种信息：%s %s\n", latinNameString, namePublisher)
+	fmt.Printf("    🌐 [%s]        开始从网络获取「物种信息」\n", latinNameString)
+	frpsspno, frpsspclassid, paragraphs := parseParagraphs(latinName)
+	fmt.Printf("    💚 [%s]        获取到「物种信息」\n", latinNameString)
 
-	fmt.Printf("    -> 开始寻找最匹配段落：%s\n", latinNameString)
+	fmt.Printf("    🌀 [%s]        开始寻找「最匹配段落」\n", latinNameString)
 	bestMatchParagraph := pickBestMatchedParagraph(latinNameString, paragraphs)
-	fmt.Printf("    <- 找到最匹配段落：%s\n", latinNameString)
+	fmt.Printf("    💚 [%s]        寻找「最匹配段落」完成\n", latinNameString)
 
-	fmt.Printf("    -> 开始从最匹配段落中提取形态描述信息：%s\n", latinNameString)
+	fmt.Printf("    🌀 [%s]        开始从最匹配段落中「提取形态描述信息」\n", latinNameString)
 	morphology := getMorphologyFromMultipleParagraphs([]string{bestMatchParagraph})
-	fmt.Printf("    <- 从最匹配段落中提取形态描述信息结束：%s\n", latinNameString)
+	fmt.Printf("    💚 [%s]        从最匹配段落中「提取形态描述信息」结束\n", latinNameString)
+
+	fmt.Printf("    🌐 [%s]        开始从网络获取「命名人」信息\n", latinNameString)
+	namePublisher := parseNamePublisher(latinName)
+	fmt.Printf("    💚 [%s %s]        获取到「命名人」信息 \n", latinNameString, namePublisher)
+
+	fmt.Printf("    🌐 [%s]        开始从网络获取「物种分类（Texomony，界门纲目科属种）」信息\n", latinNameString)
+	phylum, class, order, family, genus := parseTaxonomyInfo(latinName, frpsspno, frpsspclassid)
+	fmt.Printf("    💚 [%s %s]        获取到「物种分类（Texomony，界门纲目科属种）」信息: → 「%s %s %s %s %s」\n", latinNameString, namePublisher, phylum, class, order, family, genus)
 
 	return entities.WebInfo{
 		FullLatinName: latinNameString,
@@ -98,73 +109,13 @@ func GenerateWebInfo(latinNameString string) entities.WebInfo {
 	}
 }
 
-// 提取命名人信息
-// TODO, 实现方式需要优化
-func extractNamePublisher(latinName entities.LatinName, doc *goquery.Document) string {
-	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
-	targetText := ""
-	spinfoDiv.Find("div").Each(func(i int, div *goquery.Selection) {
-		if i == 0 {
-			targetText = div.Text()
-		}
-	})
-
-	namePublisherRegexp, err := regexp.Compile(
-		fmt.Sprintf(config.NamePublisherRegexpTemplate, latinName.Genus, latinName.Species))
-
-	if err != nil {
-		return ""
-	}
-
-	namePublisherSlice := namePublisherRegexp.FindAllString(targetText, -1)
-
-	if len(namePublisherSlice) == 0 {
-		return ""
-	}
-
-	namePublisher := namePublisherSlice[0]
-	namePublisher = strings.Replace(namePublisher, latinName.Genus, "", -1)
-	namePublisher = strings.Replace(namePublisher, latinName.Species, "", -1)
-
-	return strings.TrimSpace(namePublisher)
-}
-
-// extractFamily: 从网页中提取物种的 “科”（family）信息
-// TODO, 实现方式需要优化
-func extractFamily(latinName entities.LatinName, doc *goquery.Document) (family string) {
-	family = ""
-	spinfoDiv := doc.Find(config.SpeciesInfoDiv)
-	var contentDiv *goquery.Selection
-	childrenDiv := spinfoDiv.Children()
-	childrenDiv.Find("div").Each(func(i int, div *goquery.Selection) {
-		if i == 5 {
-			contentDiv = div
-		}
-	})
-
-	if contentDiv == nil {
-		return
-	}
-
-	var familyInfo string
-	contentDiv.Find("a").Each(func(i int, div *goquery.Selection) {
-		if i == 1 {
-			familyInfo = div.Text()
-		}
-	})
-
-	if len(familyInfo) > 0 && strings.Contains(familyInfo, "科") {
-		elements := strings.Fields(familyInfo)
-		if len(elements) == 2 {
-			family = elements[1]
-		}
-	}
-
-	return
-}
-
 // 选择最符合条件的段落
 func pickBestMatchedParagraph(latinNameString string, paragraphs []string) string {
+	if len(paragraphs) == 0 {
+		fmt.Printf("    💔 %s | %s | resp.Body 为空!\n", latinNameString, "pickBestMatchedParagraph")
+		return ""
+	}
+
 	// TODO, 需要实现：检查所有组合，找到第一个全部包含的段落
 	// [A, B, C, D, E], ... 是否有全部包含的段落
 	// [A, B, C, D], [A, B, C, E], ... 是否有全部包含的段落
@@ -293,30 +244,139 @@ func parseMorphologyFromContent(paragraph string) entities.Morphology {
 	}
 }
 
-// 从网络信息中提取段落及命名人信息
-func parseParagraphs(latinName entities.LatinName) (paragraphs []string, namePublisher string, family string) {
-	paragraphs = []string{}
-	namePublisher = ""
-	family = ""
-
-	url := generateUrl(latinName)
-	doc, err := goquery.NewDocument(url)
+// 「命名人」信息解析
+func parseNamePublisher(latinName entities.LatinName) (namePublisher string) {
+	baseUrl := config.URLPrefixEFLORA + strings.Join(latinName.Elements, config.URLBlankSeparator) + config.URLSuffix
+	resp, err := http.Get(baseUrl)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseNamePublisher http.Get", err)
+	}
+	defer resp.Body.Close()
+
+	spnoRegexp, err := regexp.Compile(fmt.Sprintf(config.SpnoRegexpTemplate))
+	if err != nil {
+		return ""
 	}
 
-	paragraphs = make([]string, 0)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return ""
+	}
+	spnoSlice := spnoRegexp.FindAllString(string(body), -1)
+	if len(spnoSlice) == 0 {
+		return ""
+	}
+	spnoInfo := spnoSlice[0]
+	spnoInfoSlice := strings.Split(spnoInfo, "\"")
+	if len(spnoInfoSlice) != 3 {
+		return ""
+	}
+
+	spno := spnoInfoSlice[1]
+
+	// 「拉丁名」信息查询 data 格式，注意此 spno 与 frpsspno 为不同的 ID
+	//     - spno: 从「http://www.iplant.cn/ashx/getfrps.ashx?key=Cephalotaxus+fortunei」API 返回的结果中取 var spno = "10726"
+	// 示例：spno=10726
+	resp, err = http.PostForm(config.LatinApiUrl, url.Values{"spno": {spno}})
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseNamePublisher http.PostForm", err)
+	}
+	defer resp.Body.Close()
+
+	// 示例: <span class='font20'><b>Cephalotaxus</b></span> <span class='font20'><b>fortunei</b></span> Hooker
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseNamePublisher http.PostForm", err)
+		return ""
+	}
+
+	contentSlice := strings.Split(string(body), config.NamePublisherSeparator)
+	if len(contentSlice) > 0 {
+		namePublisher = strings.TrimSpace(contentSlice[len(contentSlice)-1])
+	}
+
+	return namePublisher
+}
+
+// 从网络信息中提取「生物分类（门纲目科属）」信息
+// 界（Kingdom）、门（Phylum）、纲（Class）、目（Order）、科（Family）、属（Genus）、种（Species）
+func parseTaxonomyInfo(latinName entities.LatinName, frpsspno string, frpsspclassid string) (phylum string, class string, order string, family string, genus string) {
+	if len(frpsspno) == 0 || len(frpsspclassid) == 0 {
+		fmt.Printf("    💔 %s | %s \n", latinName.LatinNameString, "parseTaxonomyInfo frpsspno 或 frpsspclassid 为空! "+"frpsspno: "+frpsspno+", frpsspclassid: "+frpsspclassid)
+		return "", "", "", "", ""
+	}
+
+	// 「物种分类（Texomony，界门纲目科属种）」信息查询 data 格式，
+	//     - spno: 从「详细描述」API 返回的结果中取 frpsspno
+	//     - spclassid: 从「详细描述」API 返回的结果中取 frpsspclassid
+	// 示例：spno=52&spclassid=24
+	resp, err := http.PostForm(config.DetailedCategoryApiUrl, url.Values{"spno": {frpsspno}, "spclassid": {frpsspclassid}})
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseTaxonomyInfo http.PostForm", err)
+	}
+	defer resp.Body.Close()
+
+	var responseMap map[string]string
+	err = json.NewDecoder(resp.Body).Decode(&responseMap)
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseTaxonomyInfo json.NewDecoder", err)
+	}
+
+	frpsclasstxt := responseMap[config.FrpsclasstxtKeyInResponseMap]
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(frpsclasstxt))
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseTaxonomyInfo goquery.NewDocumentFromReader", err)
+	}
+
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		text := s.Text()
+		if strings.Contains(text, config.PhylumKeyword) {
+			phylum = strings.TrimSpace(text)
+		} else if strings.Contains(text, config.ClassKeyword) {
+			class = strings.TrimSpace(text)
+		} else if strings.Contains(text, config.OrderKeyword) {
+			order = strings.TrimSpace(text)
+		} else if strings.Contains(text, config.FamilyKeyword) {
+			family = strings.TrimSpace(text)
+		} else if strings.Contains(text, config.GenusKeyword) {
+			genus = strings.TrimSpace(text)
+		}
+	})
+
+	return phylum, class, order, family, genus
+}
+
+// 从网络 API 返回的详细段落信息中，提取「茎」、「叶」、「花」、「果」等信息
+func parseParagraphs(latinName entities.LatinName) (frpsspno string, frpsspclassid string, paragraphs []string) {
+	paragraphs = []string{}
+
+	apiUrl := config.DetailedDescriptionApiURLPrefix + strings.Join(latinName.Elements, config.APIURLBlankSeparator)
+	resp, err := http.Get(apiUrl)
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseParagraphs http.Get", err)
+	}
+
+	var responseMap map[string]string
+	err = json.NewDecoder(resp.Body).Decode(&responseMap)
+	if err != nil {
+		fmt.Printf("    💔 %s | %s %v \n", latinName.LatinNameString, "parseParagraphs json.NewDecoder", err)
+		return "", "", []string{}
+	}
+	defer resp.Body.Close()
+
+	frpsspno = responseMap[config.FrpsspnoKeyInResponseMap]
+	frpsspclassid = responseMap[config.FrpsspclassidKeyInResponseMap]
+	frpsdesc := responseMap[config.FrpsdescKeyInResponseMap]
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(frpsdesc))
+	if err != nil {
+		fmt.Printf("    💔 %s | %s: %v \n", latinName.LatinNameString, "parseParagraphs goquery.NewDocumentFromReader", err)
+	}
+
 	doc.Find("p").Each(func(i int, s *goquery.Selection) {
 		paragraphs = append(paragraphs, s.Text())
 	})
 
-	namePublisher = extractNamePublisher(latinName, doc)
-	family = extractFamily(latinName, doc)
-
-	return paragraphs, namePublisher, family
-}
-
-// 根据拉丁名拼接 URL
-func generateUrl(latinName entities.LatinName) string {
-	return config.URLPrefixEFLORA + strings.Join(latinName.Elements, config.URLBlankSeparator)
+	return frpsspno, frpsspclassid, paragraphs
 }

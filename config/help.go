@@ -11,11 +11,28 @@ const USAGE = `
 
 使用方法：
 
-1. 直接双击 specimen-go 文件以运行用户界面程序；
-2. 在命令行中通过参数运行：
+1. 直接双击 specimen-go 文件以运行用户界面程序（仅在 Windows 平台下支持 GUI）；
 
-   ./specimen-go -s 流水号数据.xlsx -d 鉴定录入文件.xlsx -o 输出文件.xlsx
+2. 编译后，在命令行中通过参数运行（支持所有平台）：
 
+	编译:
+
+    	go build -o specimen-go
+
+    试运行:
+
+		# 示例文件说明：
+		# → 流水号文件: snData.xlsx.sample
+		# → 物种记录及鉴定文件: offlineData.xlsx.sample
+		# 使用示例文件试运行：
+		./specimen-go \
+			-s samples/snData.xlsx.sample \
+			-d samples/offlineData.xlsx.sample \
+			-o samples/output.xlsx
+
+	查看生成的结果文件：
+
+		open samples/output.xlsx
 `
 
 const HelpMessage = `
