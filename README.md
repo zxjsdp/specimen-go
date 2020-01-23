@@ -6,7 +6,7 @@
 
 ## 使用方式
 
-最新版本下载：[specimen-go 最新版本 V1.9.0](https://github.com/zxjsdp/specimen-go/releases):
+最新版本下载：[specimen-go 最新版本 V1.9.1](https://github.com/zxjsdp/specimen-go/releases):
 
 - 对于 Windows 用户，建议下载使用已经编译好的用户界面（GUI）版本，点击运行即可；
 - 对于 Linux & macOS 用户，仅支持命令行版本不支持 GUI。建议自行编译，也可使用已编译好的二进制可执行文件。
