@@ -9,7 +9,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e
-	github.com/zxjsdp/specimen-go v0.0.0-00010101000000-000000000000
+	github.com/zxjsdp/specimen-go v1.9.2
 )
 
 require (
