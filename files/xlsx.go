@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	"github.com/xuri/excelize"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/zxjsdp/specimen-go/converters"
 	"github.com/zxjsdp/specimen-go/entities"
 )
