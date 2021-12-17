@@ -1,5 +1,5 @@
 APP_NAME := specimen-go
-APP_VERSION := v1.9.2
+APP_VERSION := v1.9.3
 
 PLATFORMS := linux/amd64 linux/386 darwin/amd64 darwin/386 windows/amd64 windows/386
 temp = $(subst /, ,$@)
